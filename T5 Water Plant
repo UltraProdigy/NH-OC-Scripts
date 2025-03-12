@@ -1,0 +1,80 @@
+-- Library Callback
+local component = require("component")
+local term = require ("term")
+local os = require ("os")
+local sides = require("sides")
+
+-- Variable Establishment
+local plasma = component.proxy("44308fa0-285a-4198-89d6-045e3bd0e74a") -- Plasma transposer
+local coolant = component.proxy("865b53bb-69cb-4e4b-98dc-ede4c11a65cd") -- Coolant transposer
+local activationSignal = component.proxy("43588dd7-2a77-421d-aa16-1b3f77112b73") -- Water Signal I/O
+
+-- Function to Detect Activation Signal
+local function waitForActivationSignal()
+    print("Waiting for Activation Signal")
+    while true do
+        local signalStrength = activationSignal.getInput(sides.north)
+        if signalStrength > 0 then
+            print("Activation Signal Aquired, Beginning Purification Procedure")
+            break
+        else
+            os.sleep(1)
+        end
+    end
+end
+
+-- Function to Wait for Ceassation of Activation Signal
+local function waitForDeactivationSignal()
+    while true do
+        local signalStrength = activationSignal.getInput(sides.north)
+        if signalStrength == 0 then
+            print("Purification Completed, Rebooting System")
+            break
+        else 
+            os.sleep(1)
+        end
+    end
+end
+
+-- Function to Deploy Helium Plasma
+local function deployPlasma()
+    while true do
+        if plasma.getTankLevel(sides.top) == 0 and coolant.getTankLevel(sides.top) == 0 then
+            plasma.transferFluid(sides.bottom, sides.top, 100)
+            print("Deploying Helium Plasma")
+            break
+        else
+            os.sleep(1)
+        end  
+    end
+end
+
+-- Function to Deploy Super Coolant
+local function deployCoolant()
+    while true do
+        if plasma.getTankLevel(sides.top) == 0 and coolant.getTankLevel(sides.top) == 0 then
+            coolant.transferFluid(sides.bottom, sides.top, 2000)
+            print("Deploying Super Coolant")
+            break
+        else
+            os.sleep(1)
+        end   
+    end
+end
+
+-- Control Program
+while true do
+    term.clear()
+    print("Initiating Program; Use Ctrl + Alt + C to Escape")
+
+        waitForActivationSignal()
+        deployPlasma()
+        deployCoolant()
+        deployPlasma()
+        deployCoolant()
+        deployPlasma()
+        deployCoolant()
+        waitForDeactivationSignal()
+
+    os.sleep(1)
+end

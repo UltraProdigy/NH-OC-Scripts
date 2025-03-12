@@ -1,0 +1,78 @@
+local component = require("component")
+local term = require ("term")
+local os = require ("os")
+local event = require("event")
+
+local prevItems = {}
+local activationSignal = integer
+local interface = component.me_interface
+local redstone = component.proxy("putAddressHere")
+-- Put Redstone IO address here
+
+local function getItems()
+    local items = {}
+    for _, item in ipairs(interface.getItemsInNetwork()) do
+        items[item.label] = item.size
+    end
+    return items
+end
+
+local function checkForNewItem()
+    local currentItems = getItems()
+    for label, count in pairs(currentItems) do
+        if not prevItems[label] or count > prevItems[label] then
+            print("Inputs Detected: " .. label)
+            activationSignal = 1
+            -- Need to set side of Redstone I/O
+            os.sleep(2)
+            activationSignal = 0
+            break
+        end
+    end
+    prevItems = currentItems
+end
+
+local function clearOutputs()
+    print ("Clearing Previous Outputs")
+    for_, address in ipairs(redstone) do
+        local redstone = component.proxy(address)
+        for side = 1, 5 do
+            redstone.setOutput(side,0)
+        end
+    end
+end
+
+local function waitForActivation()
+    print("Waiting for Activation Signal")
+    while true do
+        
+        -- Edit the side nuumber after input for comparator output to activate
+        if activationSignal >= 1 then
+            print ("Signal Found; Initiating Black Hole")
+            redstone.setOutput(1,15)
+            -- Edit this side number to reflect the side that deploys the black hole seed
+            os.sleep(85)
+            print ("Stability Has Reached 15%; Deploying Spacetime")
+            redstone.setOutput(2,15)
+            -- Edit this side number to the toggle bus for spacetime input
+            os.sleep(300)
+            -- Edit sleep number based on how much spacetime we are comfortable expending)
+            print ("Spacetime Expenditure Too High; Closing Black Hole")
+            redstone.setOutput(3,15)
+            -- Edit side to deployment of the black hole collapser
+            return
+        end
+        os.sleep(0.5)
+    end
+end
+
+while true do
+    term.clear()
+    print("Initiating Program, Use Ctrl+Alt+C to Exit")
+
+    waitForActivation()
+    checkForNewItem()
+    clearOutputs()
+
+    os.sleep(0.5)
+end

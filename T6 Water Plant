@@ -1,0 +1,207 @@
+-- Library Callback
+local component = require("component")
+local term = require ("term")
+local os = require ("os")
+local sides = require("sides")
+
+-- Variable Establishment
+local transposer = component.transposer
+local activationSignal = component.proxy("fd8989c2-7f1c-4f7b-9916-b2a2d0332ffc") -- Purification Activation Channel
+local changeSignal = component.proxy("5ce6647c-28ad-4f7a-b059-438480cb8c14")
+
+-- Function to Wait for Activation Signal
+local function waitForActivation()
+    while true do
+        local signalStrength = activationSignal.getInput(sides.north)
+        if signalStrength > 0 then
+            print("Activation Signal Found, Beginning Lens Swap Procedure")
+            break
+        else
+            os.sleep(1)
+        end
+    end
+end
+
+-- Function to send L1
+local function L1()
+    while true do
+        local signalStrength = changeSignal.getInput(sides.bottom)
+        if signalStrength > 0 then
+            os.sleep(1)
+            transposer.transferItem(sides.bottom,sides.top,1,1,9) -- Taking Out Dilithium(9)
+            transposer.transferItem(sides.top,sides.bottom,1,1,1) -- Putting in Orundum(1)
+            print("Inserted Orundum Lens")
+            break
+        else
+            os.sleep(0.5)
+        end
+    end
+end
+
+-- Function to send L2
+local function L2()
+    while true do
+        local signalStrength = changeSignal.getInput(sides.bottom)
+        if signalStrength > 0 then
+            os.sleep(1)
+            transposer.transferItem(sides.bottom,sides.top,1,1,1) -- Taking Out Orundum(1)
+            transposer.transferItem(sides.top,sides.bottom,1,2,1) -- Putting in Amber(2)
+            print("Inserted Amber Lens")
+            break
+        else
+            os.sleep(0.5)
+        end
+    end
+end
+
+-- Function to send L3
+local function L3()
+    while true do
+        local signalStrength = changeSignal.getInput(sides.bottom)
+        if signalStrength > 0 then
+            os.sleep(1)
+            transposer.transferItem(sides.bottom,sides.top,1,1,2) -- Taking Out Amber(2)
+            transposer.transferItem(sides.top,sides.bottom,1,3,1) -- Putting in Aer(3)
+            print("Inserted Aer Lens")
+            break
+        else
+            os.sleep(0.5)
+        end
+    end
+end
+
+-- Function to send L4
+local function L4()
+    while true do
+        local signalStrength = changeSignal.getInput(sides.bottom)
+        if signalStrength > 0 then
+            os.sleep(1)
+            transposer.transferItem(sides.bottom,sides.top,1,1,3) -- Taking Out Aer(3)
+            transposer.transferItem(sides.top,sides.bottom,1,4,1) -- Putting in Emerald(4)
+            print("Inserted Emerald Lens")
+            break
+        else
+            os.sleep(0.5)
+        end
+    end
+end
+
+-- Function to send L5
+local function L5()
+    while true do
+        local signalStrength = changeSignal.getInput(sides.bottom)
+        if signalStrength > 0 then
+            os.sleep(1)
+            transposer.transferItem(sides.bottom,sides.top,1,1,4) -- Taking Out Emerald(4)
+            transposer.transferItem(sides.top,sides.bottom,1,5,1) -- Putting in Mana Diamond(5)
+            print("Inserted Mana Diamond Lens")
+            break
+        else
+            os.sleep(0.5)
+        end
+    end
+end
+
+-- Function to send L6
+local function L6()
+    while true do
+        local signalStrength = changeSignal.getInput(sides.bottom)
+        if signalStrength > 0 then
+            os.sleep(1)
+            transposer.transferItem(sides.bottom,sides.top,1,1,5) -- Taking Out Mana Diamond(5)
+            transposer.transferItem(sides.top,sides.bottom,1,6,1) -- Putting in Blue Topaz(6)
+            print("Inserted Blue Topaz Lens")
+            break
+        else
+            os.sleep(0.5)
+        end
+    end
+end
+
+-- Function to send L7
+local function L7()
+    while true do
+        local signalStrength = changeSignal.getInput(sides.bottom)
+        if signalStrength > 0 then
+            os.sleep(1)
+            transposer.transferItem(sides.bottom,sides.top,1,1,6) -- Taking Out Blue Topaz(6)
+            transposer.transferItem(sides.top,sides.bottom,1,7,1) -- Putting in Amethyst(7)
+            print("Inserted Amethyst Lens")
+            break
+        else
+            os.sleep(0.5)
+        end
+    end
+end
+
+-- Function to send L8
+local function L8()
+    while true do
+        local signalStrength = changeSignal.getInput(sides.bottom)
+        if signalStrength > 0 then
+            os.sleep(1)
+            transposer.transferItem(sides.bottom,sides.top,1,1,7) -- Taking Out Amethyst(7)
+            transposer.transferItem(sides.top,sides.bottom,1,8,1) -- Putting in Fluor-Buergerite(8)
+            print("Inserted Fluor-Buergerite Lens")
+            break
+        else
+            os.sleep(0.5)
+        end
+    end
+end
+
+-- Function to send L9
+local function L9()
+    while true do
+        local signalStrength = changeSignal.getInput(sides.bottom)
+        if signalStrength > 0 then
+            os.sleep(1)
+            transposer.transferItem(sides.bottom,sides.top,1,1,8) -- Taking Out Fluor-Buergerite(8)
+            transposer.transferItem(sides.top,sides.bottom,1,9,1) -- Putting in Dilithium(9)
+            print("Inserted Dilithium Lens")
+            break
+        else
+            os.sleep(0.5)
+        end
+    end
+end
+
+-- Function to Wait for Deactivation
+local function waitForDeactivation()
+    while true do
+        local signalStrength = activationSignal.getInput(sides.north)
+        if signalStrength == 0 then
+            print("Goodnight Sweet Prince")
+            break
+        else
+            os.sleep(1)
+        end
+    end
+end
+
+-- Main Program
+
+while true do
+    term.clear()
+    print("Initiating Program; Use Ctrl + Alt + C to Escape")
+    waitForActivation()
+    L1()
+        os.sleep(2)
+    L2()
+        os.sleep(2)
+    L3()
+        os.sleep(2)
+    L4()
+        os.sleep(2)
+    L5()
+        os.sleep(2)
+    L6()
+        os.sleep(2)
+    L7()
+        os.sleep(2)
+    L8()
+        os.sleep(2)
+    L9()
+        print("All Lens Successfully Inserted; Awaiting Deactivation")
+    waitForDeactivation()
+end
