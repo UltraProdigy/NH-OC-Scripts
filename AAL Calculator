@@ -94,49 +94,65 @@ print("Statistics for a ".. voltage.. " recipe with ".. sliceCount.. " slices ta
 print(string.rep("=",158))
 -- No Laser Overclock
 print("No Laser Overclock:")
-print("Amps Per Machine = ".. sliceCount.." | Total Amps = "..(sliceCount * machineCount))
-print("EU/t Per Machine = "..(voltageNumber * sliceCount).." | Total EU/t = "..(voltageNumber * sliceCount * machineCount))
-print("Time Per Slice = "..(completionTime / (timeDiscount * sliceCount)).." | Total Time Per Operation = "..(completionTime / timeDiscount))
+print("Amps Per Machine = ".. sliceCount.." || Total Amps = "..(sliceCount * machineCount))
+local Aeu0 = voltageNumber * sliceCount
+local Beu0 = Aeu0 * machineCount
+print("EU/t Per Machine = "..string.format("%.2e",Aeu0).." || Total EU/t = "..string.format("%.2e",Beu0))
+print("Time Per Slice = "..(completionTime / (timeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / timeDiscount))
 print(string.rep("=",158))
 -- OC1
 print("1 Laser Overclock:")
-print("Amps Per Machine = ".. laser1.." | Total Amps = "..(laser1 * machineCount))
-print("EU/t Per Machine = "..(voltageNumber * laser1).." | Total EU/t = "..(voltageNumber * laser1 * machineCount))
-print("Time Per Slice = "..(completionTime / (oc1TimeDiscount * sliceCount)).." | Total Time Per Operation = "..(completionTime / oc1TimeDiscount))
+print("Amps Per Machine = ".. laser1.." || Total Amps = "..(laser1 * machineCount))
+local Aeu1 = voltageNumber * laser1
+local Beu1 = Aeu1 * machineCount
+print("EU/t Per Machine = "..string.format("%.2e",Aeu1).." || Total EU/t = "..string.format("%.2e",Beu1))
+print("Time Per Slice = "..(completionTime / (oc1TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc1TimeDiscount))
 print(string.rep("=",158))
 -- OC2
 print("2 Laser Overclocks:")
-print("Amps Per Machine = ".. laser2.." | Total Amps = "..(laser2 * machineCount))
-print("EU/t Per Machine = "..(voltageNumber * laser2).." | Total EU/t = "..(voltageNumber * laser2 * machineCount))
-print("Time Per Slice = "..(completionTime / (oc2TimeDiscount * sliceCount)).." | Total Time Per Operation = "..(completionTime / oc2TimeDiscount))
+print("Amps Per Machine = ".. laser2.." || Total Amps = "..(laser2 * machineCount))
+local Aeu2 = voltageNumber * laser2
+local Beu2 = Aeu2 * machineCount
+print("EU/t Per Machine = "..string.format("%.2e",Aeu2).." || Total EU/t = "..string.format("%.2e",Beu2))
+print("Time Per Slice = "..(completionTime / (oc2TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc2TimeDiscount))
 print(string.rep("=",158))
 -- OC3
 print("3 Laser Overclocks:")
-print("Amps Per Machine = ".. laser3.." | Total Amps = "..(laser3 * machineCount))
-print("EU/t Per Machine = "..(voltageNumber * laser3).." | Total EU/t = "..(voltageNumber * laser3 * machineCount))
-print("Time Per Slice = "..(completionTime / (oc3TimeDiscount * sliceCount)).." | Total Time Per Operation = "..(completionTime / oc3TimeDiscount))
+print("Amps Per Machine = ".. laser3.." || Total Amps = "..(laser3 * machineCount))
+local Aeu3 = voltageNumber * laser3
+local Beu3 = Aeu3 * machineCount
+print("EU/t Per Machine = "..string.format("%.2e",Aeu3).." || Total EU/t = "..string.format("%.2e",Beu3))
+print("Time Per Slice = "..(completionTime / (oc3TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc3TimeDiscount))
 print(string.rep("=",158))
 -- OC4
 print("4 Laser Overclocks:")
-print("Amps Per Machine = ".. laser4.." | Total Amps = "..(laser4 * machineCount))
-print("EU/t Per Machine = "..(voltageNumber * laser4).." | Total EU/t = "..(voltageNumber * laser4 * machineCount))
-print("Time Per Slice = "..(completionTime / (oc4TimeDiscount * sliceCount)).." | Total Time Per Operation = "..(completionTime / oc4TimeDiscount))
+print("Amps Per Machine = ".. laser4.." || Total Amps = "..(laser4 * machineCount))
+local Aeu4 = voltageNumber * laser4
+local Beu4 = Aeu4 * machineCount
+print("EU/t Per Machine = "..string.format("%.2e",Aeu4).." || Total EU/t = "..string.format("%.2e",Beu4))
+print("Time Per Slice = "..(completionTime / (oc4TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc4TimeDiscount))
 print(string.rep("=",158))
 -- OC5
 print("5 Laser Overclocks:")
-print("Amps Per Machine = ".. laser5.." | Total Amps = "..(laser5 * machineCount))
-print("EU/t Per Machine = "..(voltageNumber * laser5).." | Total EU/t = "..(voltageNumber * laser5 * machineCount))
-print("Time Per Slice = "..(completionTime / (oc5TimeDiscount * sliceCount)).." | Total Time Per Operation = "..(completionTime / oc5TimeDiscount))
+print("Amps Per Machine = ".. laser5.." || Total Amps = "..(laser5 * machineCount))
+local Aeu5 = voltageNumber * laser5
+local Beu5 = Aeu5 * machineCount
+print("EU/t Per Machine = "..string.format("%.2e",Aeu5).." || Total EU/t = "..string.format("%.2e",Beu5))
+print("Time Per Slice = "..(completionTime / (oc5TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc5TimeDiscount))
 print(string.rep("=",158))
 -- OC6
 print("6 Laser Overclocks:")
-print("Amps Per Machine = ".. laser6.." | Total Amps = "..(laser6 * machineCount))
-print("EU/t Per Machine = "..(voltageNumber * laser6).." | Total EU/t = "..(voltageNumber * laser6 * machineCount))
-print("Time Per Slice = "..(completionTime / (oc6TimeDiscount * sliceCount)).." | Total Time Per Operation = "..(completionTime / oc6TimeDiscount))
+print("Amps Per Machine = ".. laser6.." || Total Amps = "..(laser6 * machineCount))
+local Aeu6 = voltageNumber * laser6
+local Beu6 = Aeu6 * machineCount
+print("EU/t Per Machine = "..string.format("%.2e",Aeu6).." || Total EU/t = "..string.format("%.2e",Beu6))
+print("Time Per Slice = "..(completionTime / (oc6TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc6TimeDiscount))
 print(string.rep("=",158))
 -- OC7
 print("7 Laser Overclocks:")
-print("Amps Per Machine = ".. laser7.." | Total Amps = "..(laser7 * machineCount))
-print("EU/t Per Machine = "..(voltageNumber * laser7).." | Total EU/t = "..(voltageNumber * laser7 * machineCount))
-print("Time Per Slice = "..(completionTime / (oc7TimeDiscount * sliceCount)).." | Total Time Per Operation = "..(completionTime / oc7TimeDiscount))
+print("Amps Per Machine = ".. laser7.." || Total Amps = "..(laser7 * machineCount))
+local Aeu7 = voltageNumber * laser7
+local Beu7 = Aeu7 * machineCount
+print("EU/t Per Machine = "..string.format("%.2e",Aeu7).." || Total EU/t = "..string.format("%.2e",Beu7))
+print("Time Per Slice = "..(completionTime / (oc7TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc7TimeDiscount))
 print(string.rep("=",158))
