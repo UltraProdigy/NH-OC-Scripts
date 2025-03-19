@@ -1,0 +1,9 @@
+local component = require("component")
+local term = require("term")
+
+local data = component.proxy("1bacc42d-f9cd-434a-8bb2-78c963e2ed8b")
+local info = data.getSensorInformation()
+
+for i, v in ipairs(info) do
+    print(i .. ": " .. v)
+end
