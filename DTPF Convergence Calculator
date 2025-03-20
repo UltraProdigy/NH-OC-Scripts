@@ -43,25 +43,50 @@ local function roundDownToInterval(y)
     return math.max(result,0.05)
 end
 
+-- Function to Round Down to 20 Interval (Recipe/Second Alignment)
+local function roundDownToTwenty(a)
+    return math.floor(a/20) * 20
+end
+
+-- Function to Round Up to nearest tenth
+local function roundUpToTenths(z)
+    return math.ceil(z*10) / 10
+end
+
 -- Overclock Function
 local function overClock(x)
     x = tonumber(x)
     -- Function-Wide global variables
     local ocPower = 4^x
     local eut = baseEUt * ocPower
+    local totalEU = baseEUt * baseTime * 20
+    local totalOcEu = totalEU * 2^x
     local amps = math.ceil((baseEUt * ocPower)/voltageNumber)
-    local iocTime = roundDownToInterval(baseTime/(2^x))
-    local pocTime = 0
-    if x > 4 then
-        pocTime = (baseTime/(4^x))
-    elseif x < 5 then
-        pocTime = roundDownToInterval(baseTime/(4^x))
+    local iocTime = (baseTime/(2^x))
+    local pocTime = (baseTime/(4^x))
+    local iocRecipePerSecond = 0
+    local pocRecipePerSecond = 0
+
+    if iocTime >= 0.05 then
+        iocTime = roundDownToInterval(iocTime)
+        iocRecipePerSecond = (1/iocTime)
+    elseif iocTime < 0.05 then
+        iocRecipePerSecond = (1/iocTime)
+        iocRecipePerSecond = roundDownToTwenty(iocRecipePerSecond)
     else
     end
-    local iocRecipePerSecond = (1/iocTime)
-    local pocRecipePerSecond = (1/pocTime)
+
+    if pocTime >= 0.05 then
+        pocTime = roundDownToInterval(pocTime)
+        pocRecipePerSecond = (1/pocTime)
+    elseif pocTime < 0.05 then
+        pocRecipePerSecond = (1/pocTime)
+        pocRecipePerSecond = roundDownToTwenty(pocRecipePerSecond)
+    else
+    end
+
     local iocCatalyst = catalystAmount * iocRecipePerSecond * 0.5 -- For 50% Discount
-    local pocCatalyst = catalystAmount * pocRecipePerSecond -- Needs Replacement with equation
+    local pocCatalyst = (pocRecipePerSecond * (catalystAmount * 0.5) + ((totalOcEu - totalEU) / (2 * catalystEnergy)))
     local iocOutputRate = primaryOutputAmount * iocRecipePerSecond
     local pocOutputRate = primaryOutputAmount * pocRecipePerSecond
     -- Titlecard
@@ -69,11 +94,15 @@ local function overClock(x)
     io.write(x.." Imperfect (2/4) Overclock |")
     cyan()
     print("| "..x.." Perfect (4/4) Overclock (w/ Convergence)")
-    -- Recipe EU/t
+    -- Recipe EU/t & Amperage
     orange()
-    print("EU/t: "..string.format("%.2e",eut))
-    -- Recipe Amperage
-    print("Amperage Required: "..amps)
+    io.write("EU/t: "..string.format("%.2e",eut))
+    print(" || Amperage Required: "..amps)
+    -- Recipe Per Second Calculation
+    green()
+    io.write("Recipes Per Second: "..roundUpToTenths(iocRecipePerSecond).." |")
+    cyan()
+    print("| Recipes Per Second: "..roundUpToTenths(pocRecipePerSecond))
     -- Recipe Catalyst Requirements (L/s)
     green()
     io.write("Catalyst Rate Requirement: "..math.ceil(iocCatalyst).." L/s |")
