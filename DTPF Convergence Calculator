@@ -37,14 +37,27 @@ local function orange()
     gpu.setForeground(0xFFCC99)
 end
 
+-- Function to Round Down to 0.05 Interval (Minecraft Tick Alignment)
+local function roundDownToInterval(y)
+    local result = math.floor(y/0.05) * 0.05
+    return math.max(result,0.05)
+end
+
 -- Overclock Function
 local function overClock(x)
+    x = tonumber(x)
     -- Function-Wide global variables
     local ocPower = 4^x
     local eut = baseEUt * ocPower
     local amps = math.ceil((baseEUt * ocPower)/voltageNumber)
-    local iocTime = (baseTime/(2^x))
-    local pocTime = (baseTime/(4^x))
+    local iocTime = roundDownToInterval(baseTime/(2^x))
+    local pocTime = 0
+    if x > 4 then
+        pocTime = (baseTime/(4^x))
+    elseif x < 5 then
+        pocTime = roundDownToInterval(baseTime/(4^x))
+    else
+    end
     local iocRecipePerSecond = (1/iocTime)
     local pocRecipePerSecond = (1/pocTime)
     local iocCatalyst = catalystAmount * iocRecipePerSecond * 0.5 -- For 50% Discount
