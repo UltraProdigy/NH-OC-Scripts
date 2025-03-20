@@ -9,7 +9,7 @@ local voltageNumber = 0
 local catalystAmount = 0
 local primaryOutputAmount = 0
 local baseTime = 0
-local recipePerSecond = 0
+local catalystEnergy = 0
 
 -- Function to Prompt the User
 local function ask(prompt)
@@ -47,8 +47,8 @@ local function overClock(x)
     local pocTime = (baseTime/(4^x))
     local iocRecipePerSecond = (1/iocTime)
     local pocRecipePerSecond = (1/pocTime)
-    local iocCatalyst = catalystAmount * iocRecipePerSecond
-    local pocCatalyst = catalystAmount * pocRecipePerSecond
+    local iocCatalyst = catalystAmount * iocRecipePerSecond * 0.5 -- For 50% Discount
+    local pocCatalyst = catalystAmount * pocRecipePerSecond -- Needs Replacement with equation
     local iocOutputRate = primaryOutputAmount * iocRecipePerSecond
     local pocOutputRate = primaryOutputAmount * pocRecipePerSecond
     -- Titlecard
@@ -103,6 +103,23 @@ end
 -- Time Prompt
 local recipeTime = ask("Recipe Time (s): ")
 baseTime = tonumber(recipeTime)
+
+-- Catalyst Type Prompt
+local catalystType = ask("Type of Catalyst Used: ")
+
+if catalystType == "crude" then
+    catalystEnergy = 14514983
+elseif catalystType == "prosaic" then
+    catalystEnergy = 66768460
+elseif catalystType == "resplendent" then
+    catalystEnergy = 269326451
+elseif catalystType == "exotic" then
+    catalystEnergy = 1073007393
+elseif catalystType == "stellar" then
+    catalystEnergy = 4276767521
+else
+    print("Not a type of catalyst you fucking fuck. Restart the fucking program dimwit")
+end
 
 -- Catalyst Prompt
 local recipeCatalyst = ask("Catalyst Amount Used (L): ")
