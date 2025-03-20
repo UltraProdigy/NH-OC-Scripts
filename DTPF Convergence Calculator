@@ -46,8 +46,8 @@ local function overClock(x)
     local iocTime = (baseTime/(2^x))
     local pocTime = (baseTime/(4^x))
     local iocRecipePerSecond = (1/iocTime)
-    local iocCatalyst = catalystAmount * iocRecipePerSecond
     local pocRecipePerSecond = (1/pocTime)
+    local iocCatalyst = catalystAmount * iocRecipePerSecond
     local pocCatalyst = catalystAmount * pocRecipePerSecond
     local iocOutputRate = primaryOutputAmount * iocRecipePerSecond
     local pocOutputRate = primaryOutputAmount * pocRecipePerSecond
@@ -63,14 +63,14 @@ local function overClock(x)
     print("Amperage Required: "..amps)
     -- Recipe Catalyst Requirements (L/s)
     green()
-    io.write("Catalyst Rate Requirement: "..iocCatalyst.." L/s |")
+    io.write("Catalyst Rate Requirement: "..math.ceil(iocCatalyst).." L/s |")
     cyan()
-    print("| Catalyst Rate Requirement: "..pocCatalyst.." L/s")
+    print("| Catalyst Rate Requirement: "..math.ceil(pocCatalyst).." L/s")
     -- Recipe Primary Output Amount (L/s)
     green()
-    io.write("Primary Output Rate: "..iocOutputRate.." L/s |")
+    io.write("Primary Output Rate: "..math.ceil(iocOutputRate).." L/s |")
     cyan()
-    print("| Primary Output Rate: "..pocOutputRate.." L/s")
+    print("| Primary Output Rate: "..math.ceil(pocOutputRate).." L/s")
     -- End of Line
     white()
     print(string.rep("=",158))
@@ -101,22 +101,20 @@ else
 end
 
 -- Time Prompt
-local recipeTime = ask("Recipe Time: ")
+local recipeTime = ask("Recipe Time (s): ")
 baseTime = tonumber(recipeTime)
 
 -- Catalyst Prompt
-local recipeCatalyst = ask("Catalyst Amount Used: ")
+local recipeCatalyst = ask("Catalyst Amount Used (L): ")
 catalystAmount = tonumber(recipeCatalyst)
 
 -- Primary Output Prompt
-local recipePrimaryOutput = ask("Primary Output Amount: ")
+local recipePrimaryOutput = ask("Primary Output Amount (L): ")
 primaryOutputAmount = tonumber(recipePrimaryOutput)
 
 -- Final Readout
 term.clear()
-print(" Stats for a "..recipeEUt.." EU/t recipe powered by ")
 print(string.rep("=",158))
-
 overClock(1)
 overClock(2)
 overClock(3)
