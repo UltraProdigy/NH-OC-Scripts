@@ -39,11 +39,18 @@ end
 
 -- Overclock Function
 local function overClock(x)
-    -- Function global variables
-    local oc = 2^x
-    local ioc = 4^x
-    local eut = baseEUt * ioc
-    local amps = math.ceil((baseEUt * ioc)/voltageNumber)
+    -- Function-Wide global variables
+    local ocPower = 4^x
+    local eut = baseEUt * ocPower
+    local amps = math.ceil((baseEUt * ocPower)/voltageNumber)
+    local iocTime = (baseTime/(2^x))
+    local pocTime = (baseTime/(4^x))
+    local iocRecipePerSecond = (1/iocTime)
+    local iocCatalyst = catalystAmount * iocRecipePerSecond
+    local pocRecipePerSecond = (1/pocTime)
+    local pocCatalyst = catalystAmount * pocRecipePerSecond
+    local iocOutputRate = primaryOutputAmount * iocRecipePerSecond
+    local pocOutputRate = primaryOutputAmount * pocRecipePerSecond
     -- Titlecard
     green()
     io.write(x.." Imperfect (2/4) Overclock |")
@@ -54,9 +61,16 @@ local function overClock(x)
     print("EU/t: "..string.format("%.2e",eut))
     -- Recipe Amperage
     print("Amperage Required: "..amps)
-    -- Recipe Catalyst Requirements
+    -- Recipe Catalyst Requirements (L/s)
     green()
-    io.write("Catalyst Requirement: ")
+    io.write("Catalyst Rate Requirement: "..iocCatalyst.." L/s |")
+    cyan()
+    print("| Catalyst Rate Requirement: "..pocCatalyst.." L/s")
+    -- Recipe Primary Output Amount (L/s)
+    green()
+    io.write("Primary Output Rate: "..iocOutputRate.." L/s |")
+    cyan()
+    print("| Primary Output Rate: "..pocOutputRate.." L/s")
     -- End of Line
     white()
     print(string.rep("=",158))
@@ -89,7 +103,6 @@ end
 -- Time Prompt
 local recipeTime = ask("Recipe Time: ")
 baseTime = tonumber(recipeTime)
-recipePerSecond = baseTime 
 
 -- Catalyst Prompt
 local recipeCatalyst = ask("Catalyst Amount Used: ")
@@ -97,6 +110,7 @@ catalystAmount = tonumber(recipeCatalyst)
 
 -- Primary Output Prompt
 local recipePrimaryOutput = ask("Primary Output Amount: ")
+primaryOutputAmount = tonumber(recipePrimaryOutput)
 
 -- Final Readout
 term.clear()
@@ -111,4 +125,3 @@ overClock(5)
 overClock(6)
 overClock(7)
 overClock(8)
-
