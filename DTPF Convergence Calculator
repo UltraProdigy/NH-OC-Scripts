@@ -89,6 +89,7 @@ local function overClock(x)
     local pocCatalyst = (pocRecipePerSecond * (catalystAmount * 0.5) + ((totalOcEu - totalEU) / (2 * catalystEnergy)))
     local iocOutputRate = primaryOutputAmount * iocRecipePerSecond
     local pocOutputRate = primaryOutputAmount * pocRecipePerSecond
+    
     -- Titlecard
     green()
     io.write(x.." Imperfect (2/4) Overclock |")
@@ -124,7 +125,7 @@ local recipeEUt = ask("EU/t of Recipe: ")
 baseEUt = tonumber(recipeEUt)
 
 -- Tier of Input Energy Hatch Prompt
-local voltage = ask("Input Energy hatch Tier: ")
+local voltage = ask("Input Energy Hatch Tier: ")
 
 if voltage == "uxv" then
     voltageNumber = 503316480
@@ -139,7 +140,8 @@ elseif voltage == "uhv" then
 elseif voltage == "uv" then
     voltageNumber = 491520
 else
-    print("Either your dumbass entered a fucking number or you asked for lower then UV, fucking why? Fucking try again")
+    print("Either you screwed that up or you're trying to use less then uv power which is cause for concern")
+    print("Use Ctrl + Alt + C to cancel program and restart")
 end
 
 -- Time Prompt
@@ -149,18 +151,19 @@ baseTime = tonumber(recipeTime)
 -- Catalyst Type Prompt
 local catalystType = ask("Type of Catalyst Used: ")
 
-if catalystType == "crude" then
+if catalystType == "crude" or "1" then
     catalystEnergy = 14514983
-elseif catalystType == "prosaic" then
+elseif catalystType == "prosaic" or "2" then
     catalystEnergy = 66768460
-elseif catalystType == "resplendent" then
+elseif catalystType == "resplendent" or "3" then
     catalystEnergy = 269326451
-elseif catalystType == "exotic" then
+elseif catalystType == "exotic" or "4" then
     catalystEnergy = 1073007393
-elseif catalystType == "stellar" then
+elseif catalystType == "stellar" or "5" then
     catalystEnergy = 4276767521
 else
-    print("Not a type of catalyst you fucking fuck. Restart the fucking program dimwit")
+    print("Horrendous news, you've screwed up the input")
+    print("Use Ctrl + Alt + C to cancel program and restart")
 end
 
 -- Catalyst Prompt
