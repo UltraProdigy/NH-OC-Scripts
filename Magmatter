@@ -67,50 +67,50 @@ end
 local function configureInterface()
     local item = getTinyDust()
     local itemName = item.label
-    dustReceiver.setInterfaceConfiguration(1) -- Clears Interface Slot
+    dustReceiver.setInterfaceConfiguration(1) -- Clears Interface Slots
     dustReceiver.setInterfaceConfiguration(2)
-    print("Searching Government Database for ".. item.label.. "'s Daddy Dust")
+    print("Searching Government Database for ".. item.label)
 
-    if itemName == "Tiny Pile of Rhugnor Dust" then
+    if itemName == "Rhugnor Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 1, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 1, remainder)
-    elseif itemName == "Tiny Pile of Bedrockium Dust" then
+    elseif itemName == "Bedrockium Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 2, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 2, remainder)
-    elseif itemName == "Tiny Pile of Hypogen Dust" then
+    elseif itemName == "Hypogen Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 3, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 3, remainder)
-    elseif itemName == "Tiny Pile of Neutronium Dust" then
+    elseif itemName == "Neutronium Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 4, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 4, remainder)
-    elseif itemName == "Tiny Pile of Celestial Tungsten Dust" then
+    elseif itemName == "Celestial Tungsten Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 5, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 5, remainder)
-    elseif itemName == "Tiny Pile of Flerovium Dust" then
+    elseif itemName == "Flerovium Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 6, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 6, remainder)
-    elseif itemName == "Tiny Pile of Infinity Dust" then
+    elseif itemName == "Infinity Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 7, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 7, remainder)
-    elseif itemName == "Tiny Pile of Draconium Dust" then
+    elseif itemName == "Draconium Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 8, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 8, remainder)
-    elseif itemName == "Tiny Pile of Awakened Draconium Dust" then
+    elseif itemName == "Awakened Draconium Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 9, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 9, remainder)
-    elseif itemName == "Tiny Pile of Dragonblood Dust" then
+    elseif itemName == "Dragonblood Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 10, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 10, remainder)
-    elseif itemName == "Tiny Pile of Chromatic Glass Dust" then
+    elseif itemName == "Chromatic Glass Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 11, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 11, remainder)
-    elseif itemName == "Tiny Pile of Ichorium Dust" then
+    elseif itemName == "Ichorium Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 12, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 12, remainder)
-    elseif itemName == "Tiny Pile of Cosmic Neutronium Dust" then
+    elseif itemName == "Cosmic Neutronium Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 13, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 13, remainder)
-    elseif itemName == "Tiny Pile of Six-Phased Copper Dust" then
+    elseif itemName == "Six-Phased Copper Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 14, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 14, remainder)
     else
