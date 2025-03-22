@@ -1,0 +1,12 @@
+-- Library Calls
+local component = require("component")
+local term = require ("term")
+local os = require ("os")
+local event = require("event")
+
+-- Functionally Global Variables
+
+-- Main Line
+
+-- Feature Summary:
+-- Detect 
