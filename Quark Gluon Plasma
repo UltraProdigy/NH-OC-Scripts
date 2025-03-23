@@ -5,10 +5,10 @@ local os = require ("os")
 local event = require("event")
 
 -- Functionally Global Variables
-local fluidNet = component.proxy("Interface ID")
-local itemNet = component.proxy("Interface ID")
+local fluidNet = component.proxy("1b07d0dd-1072-44fa-baaf-fefb3d3d6a6d")
+local itemNet = component.proxy("8fbc170a-fc07-490b-ad01-23865044ff62")
 local combinedReadOnlyNet = component.proxy("Interface ID") -- Net for reading Item, Fluid, & Plasma
-local mainNet = component.proxy("Interface ID")
+local mainNet = component.proxy("e3c9ef7b-3652-4b56-b3e4-b31d0f3c813d")
 local plasmaNet = component.proxy("Interface ID")
 local data = component.database
 local dbaddress = data.address
