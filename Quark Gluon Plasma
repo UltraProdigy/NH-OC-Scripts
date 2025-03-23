@@ -5,8 +5,89 @@ local os = require ("os")
 local event = require("event")
 
 -- Functionally Global Variables
+local fluidNet = component.proxy("Interface ID")
+local itemNet = component.proxy("Interface ID")
+local combinedReadOnlyNet = component.proxy("Interface ID") -- Net for reading Item, Fluid, & Plasma
+local mainNet = component.proxy("Interface ID")
+local plasmaNet = component.proxy("Interface ID")
+local data = component.database
+local dbaddress = data.address
+local meItemAmount = 0
+local meFluidAmount = 0
+
+-- Function to Wait for Program Activation
+local function waitForActivation()
+    print("Awaiting Activation; Use Ctrl + Alt + C to Exit Program")
+    while true do 
+        local activationItems = combinedReadOnlyNet.getItemsInNetwork()
+        if #activationItems >= 1 then
+            break
+        else
+            os.sleep(1)
+        end
+    end    
+end
+
+-- Function to Wait for Program Deactivation
+local function waitForDeactivation()
+    print("Awaiting Deactivation")
+    while true do
+        local deactivationItems = combinedReadOnlyNet.getItemsInNetwork()
+        if #deactivationItems == 0 then
+            break
+        else
+            os.sleep(1)
+        end
+    end
+end
+
+-- Function to Read Items in ItemNet
+local function readItemNet()
+    local meItems = itemNet.getItemsInNetwork()
+    meItemAmount = 0
+        for _, item in ipairs(meItems) do
+            meItemAmount = meItemAmount + item.size
+        end
+    print("Detected Item in ItemNet")
+    return meItemAmount
+end
+
+-- Function to Perform ItemNet  
+local function itemToPlasma()
+    while true do
+        if readItemNet() ~= nil or 0 then
+            break
+        else
+            os.sleep(1)
+        end
+    end
+    data.set(1,item.label(readItemNet()))
+end    
+
+-- Function to Read Fluids in FluidNet
+local function redFluidNet()
+    local meFluids = fluidNet.getItemsInNetwork()
+    meFluidAmount = 0
+        for _, item in ipairs(meFluids) do
+            meFluidAmount = meFluidAmount + item.size
+        end
+    print("Detected Fluid in FluidNet")
+    return meFluidAmount
+end
+
 
 -- Main Line
+while true do
+    waitForActivation()
+
+    readItemNet()
+    itemToPlasma()
+
+    waitForDeactivation()
+    os.sleep(2)
+end
 
 -- Feature Summary:
--- Detect 
+-- Wait for items to appear in either net
+-- Do actions
+-- Wait for items to dissapear in either net
