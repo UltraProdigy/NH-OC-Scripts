@@ -4,14 +4,21 @@ local term = require ("term")
 local os = require ("os")
 local event = require("event")
 
--- Functionally Global Variables
+-- Interfaces
 local fluidNet = component.proxy("1b07d0dd-1072-44fa-baaf-fefb3d3d6a6d")
 local itemNet = component.proxy("8fbc170a-fc07-490b-ad01-23865044ff62")
-local combinedReadOnlyNet = component.proxy("Interface ID") -- Net for reading Item, Fluid, & Plasma
+local combinedReadOnlyNet = component.proxy("Interface ID")
 local mainNetInterface = component.proxy("e3c9ef7b-3652-4b56-b3e4-b31d0f3c813d")
-local mainNetTransposer = component.proxy("ID")
-local trashTransfer = component.proxy("ID")
 local plasmaNet = component.proxy("Interface ID")
+
+-- Transposers
+local mainNetTransposer = component.proxy("ID")
+local trashTransposer = component.proxy("ID")
+local curiumTransposer = component.proxy("ID")
+local fluidTranspoer1 = component.proxy("ID")
+local fluidTransposer2 = component.proxy("ID")
+
+-- Other Functionally Global Variables
 local data = component.database
 local dbaddress = data.address
 local meItemAmount = 0
@@ -54,29 +61,49 @@ local function readItemNet()
     return meItemAmount
 end
 
--- Function to Perform ItemNet  
+-- Function to Perform PlasmaNet Transfer 
 local function itemToPlasma()
+    
+    -- Checks for item in system and skips function if not
     while true do
-        if readItemNet() ~= nil or 0 then -- Check for Item in Network
+        if readItemNet() ~= nil or 0 then
             break
         else
-            os.sleep(1)
+            return
         end
     end
-    print("Item found: ")
 
-    local item = readItemNet()
+    -- Sets database to item
+    local item = itemNet.getItemsInNetwork()
+    data.clear(1)
+    data.set(1,item)
+
+    -- Curium Contingency
     local itemName = item.label
-    data.set(1,itemName) -- Set Database to Item
+    if itemName == "Curium Dust" then
+        data.clear(1)
+        curiumTransposer.transferFluid(source, sink, count)
+    else
+    end
+
+    -- Establish batchQuantity and set interface to appropriate dust
     local batchQuantity = readItemNet() * 9
     print("The Batchquantity for ITEM will be: "..batchQuantity)
     mainNetInterface.setInterfaceConfiguration(1, dbaddress, 1, batchQuantity) -- Set Interface to Request Items
-    mainNetTransposer.getSlotStackSize(1)
+    
+    while true do -- Loop to check for complete item stocking
+    local waitForSystem = mainNetTransposer.getSlotStackSize(side, 1)
+        if waitForSystem == batchQuantity then
+            break
+        else
+            os.sleep(0.5)
+        end
+    end    
 
 end    
 
 -- Function to Read Fluids in FluidNet
-local function redFluidNet()
+local function readFluidNet()
     local meFluids = fluidNet.getItemsInNetwork()
     meFluidAmount = 0
         for _, item in ipairs(meFluids) do
@@ -91,14 +118,13 @@ end
 while true do
     waitForActivation()
 
-    readItemNet()
-    itemToPlasma()
+    for i = 1, 7 do
+        itemToPlasma()
+        os.sleep(2)
+        fluidToPlasma()
+        os.sleep(2)
+    end
 
     waitForDeactivation()
-    os.sleep(2)
+    os.sleep(1)
 end
-
--- Feature Summary:
--- Wait for items to appear in either net
--- Do actions
--- Wait for items to dissapear in either net
