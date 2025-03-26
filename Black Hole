@@ -4,9 +4,9 @@ local os = require ("os")
 local event = require("event")
 
 local prevItems = {}
-local activationSignal = integer
+local activationSignal = 0
 local interface = component.me_interface
-local redstone = component.proxy("putAddressHere")
+local redstone = component.proxy("07454d47-0f2f-496d-a628-1a0f798afd3a")
 -- Put Redstone IO address here
 
 local function getItems()
@@ -34,7 +34,7 @@ end
 
 local function clearOutputs()
     print ("Clearing Previous Outputs")
-    for_, address in ipairs(redstone) do
+    for _, address in ipairs(redstone) do
         local redstone = component.proxy(address)
         for side = 1, 5 do
             redstone.setOutput(side,0)

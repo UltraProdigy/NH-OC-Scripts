@@ -17,6 +17,7 @@ local trashTransposer = component.proxy("ID")
 local curiumTransposer = component.proxy("ID")
 local fluidTranspoer1 = component.proxy("ID")
 local fluidTransposer2 = component.proxy("ID")
+local fluidTransposer3 = component.proxy("ID")
 
 -- Other Functionally Global Variables
 local data = component.database
@@ -61,7 +62,7 @@ local function readItemNet()
     return meItemAmount
 end
 
--- Function to Perform PlasmaNet Transfer 
+-- Function to Perform PlasmaNet Item Transfer 
 local function itemToPlasma()
     
     -- Checks for item in system and skips function if not
@@ -91,7 +92,8 @@ local function itemToPlasma()
     print("The Batchquantity for ITEM will be: "..batchQuantity)
     mainNetInterface.setInterfaceConfiguration(1, dbaddress, 1, batchQuantity) -- Set Interface to Request Items
     
-    while true do -- Loop to check for complete item stocking
+    -- Loop to check for complete item stocking
+    while true do 
     local waitForSystem = mainNetTransposer.getSlotStackSize(side, 1)
         if waitForSystem == batchQuantity then
             break
@@ -99,6 +101,12 @@ local function itemToPlasma()
             os.sleep(0.5)
         end
     end    
+
+    -- Transfer item to plasma, trash hostage item, cleanup
+    mainNetTransposer.transferItem()
+    mainNetInterface.setInterfaceConfiguration(1)
+    trashTransposer.transferItem()
+    data.clear(1)
 
 end    
 
@@ -113,6 +121,32 @@ local function readFluidNet()
     return meFluidAmount
 end
 
+-- Function to Perform PlasmaNet Fluid Transfer
+local function fluidToPlasma()
+
+    -- Checks for item in system and skips function if not
+    while true do
+        if readFluidNet() ~= nil or 0 then
+            break
+         else
+            return
+        end
+    end
+    
+    -- Define Fluid
+    local item = itemNet.getItemsInNetwork()
+    local itemName = item.label
+
+    if itemName == "drop of Nitrogen Gas" then
+        dustReceiver.setInterfaceConfiguration(1, dbAddress, 1, batchQuantity)
+        dustReceiver.setInterfaceConfiguration(2, dbAddress, 1, remainder)
+    elseif itemName == "Bedrockium Dust" then
+        dustReceiver.setInterfaceConfiguration(1, dbAddress, 2, batchQuantity)
+        dustReceiver.setInterfaceConfiguration(2, dbAddress, 2, remainder)
+    elseif itemName == "Hypogen Dust" then
+    end
+
+end
 
 -- Main Line
 while true do
