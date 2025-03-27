@@ -1,0 +1,22 @@
+local component = require("component")
+local term = require ("term")
+local os = require ("os")
+local event = require("event")
+local sides = require("sides")
+
+local prevItems = {}
+local activationSignal = 0
+local interface = component.me_interface
+local redstone = component.proxy("07454d47-0f2f-496d-a628-1a0f798afd3a") -- Redstone I/O
+
+local function clearOutputs()
+    print ("Clearing Previous Outputs")
+    redstone.setOutput(sides.east,0)
+    redstone.setOutput(sides.north,0)
+    redstone.setOutput(sides.west,0)
+    activationSignal = 0
+    os.sleep(5)
+end
+
+term.clear()
+clearOutputs()
