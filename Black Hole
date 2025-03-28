@@ -1,14 +1,29 @@
+-- Library Call
 local component = require("component")
 local term = require ("term")
 local os = require ("os")
 local event = require("event")
 local sides = require("sides")
 
+-- Transcendent Variable Establishment
 local prevItems = {}
+local stAmount = 0
 local activationSignal = 0
 local interface = component.me_interface
 local redstone = component.proxy("07454d47-0f2f-496d-a628-1a0f798afd3a") -- Redstone I/O
 
+-- Function to Prompt the User
+local function ask(prompt)
+    io.write(prompt.. " ")
+    return io.read()
+end
+
+-- Function to Obtain Consumption Information
+local function spacetimePrompt()
+    stAmount = ask("Desired Spacetime Consumption Per Cycle:")
+end
+
+-- Function for Reading ME System
 local function getItems()
     local items = {}
     for _, item in ipairs(interface.getItemsInNetwork()) do
@@ -17,6 +32,7 @@ local function getItems()
     return items
 end
 
+-- Item Check for Activation
 local function checkForNewItem()
     while true do
     local currentItems = getItems()
@@ -33,6 +49,7 @@ local function checkForNewItem()
     end
 end
 
+-- Clear Output Function
 local function clearOutputs()
     print ("Clearing Previous Outputs")
     redstone.setOutput(sides.east,0)
@@ -42,6 +59,7 @@ local function clearOutputs()
     os.sleep(0.5)
 end
 
+-- Activation Check & Timekeeper
 local function waitForActivation()
     print("Waiting for Activation Signal")
     while true do
@@ -59,6 +77,8 @@ local function waitForActivation()
         os.sleep(0.5)
     end
 end
+
+-- Main Line
 
 while true do
     term.clear()
