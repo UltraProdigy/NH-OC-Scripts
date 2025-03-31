@@ -36,8 +36,8 @@ local function findY()
     end
 end    
 
--- Function to Sum Spacetime Series
-local function sumSeries()
+-- Function to Sum Series for N-1
+local function sumSeriesN()
     local sum = 0
     for N = 0, (findY() - 1) do
         sum = sum + (30 * 2^(N))
@@ -45,15 +45,26 @@ local function sumSeries()
     return sum
 end
 
+-- Function to Sum Series for N
+local function sumSeries()
+    local sum = 0
+    for N = 0, (findY()) do
+        sum = sum + (30 * 2^(N))
+    end
+    return sum
+end
+
 -- Remainder Function
 local function remainder()
-    local remainderAmount = (stAmount/(30 * 2^findY())) * 30
-    return remainderAmount
+    local remainingLiters = stAmount - sumSeriesN()
+    local litersNeededInTheNext30SecondsButWeArentUsingTheFull30Seconds = sumSeries() - sumSeriesN()
+    local remainingSeconds = (remainingLiters / litersNeededInTheNext30SecondsButWeArentUsingTheFull30Seconds)
+    return remainingSeconds
 end
 
 -- Function to Calculate Total Spacetime Consumption, Total Seconds Hole is Awake, & Parallel Efficiency
 local function calculations()
-    local totalAwakeTime = sumSeries() + remainder() + 90
+    local totalAwakeTime = (30 * findY()) + remainder() + 90
     local parallelEfficiency = (1 - (80 / totalAwakeTime)) * 100
     print("Using "..stAmount.." Spacetime, Each Cycle will be "..totalAwakeTime.."(s) Operating at "..parallelEfficiency.."% Parallel Efficiency")
 end
