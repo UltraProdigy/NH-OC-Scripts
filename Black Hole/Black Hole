@@ -1,0 +1,83 @@
+-- Library Call
+local component = require("component")
+local term = require ("term")
+local os = require ("os")
+local event = require("event")
+local sides = require("sides")
+
+-- Transcendent Variable Establishment
+local prevItems = {}
+local stAmount = 0
+local activationSignal = 0
+local interface = component.me_interface
+local redstone = component.proxy("07454d47-0f2f-496d-a628-1a0f798afd3a") -- Redstone I/O
+
+-- Function for Reading ME System
+local function getItems()
+    local items = {}
+    for _, item in ipairs(interface.getItemsInNetwork()) do
+        items[item.label] = item.size
+    end
+    return items
+end
+
+-- Item Check for Activation
+local function checkForNewItem()
+    while true do
+    local currentItems = getItems()
+        for label, count in pairs(currentItems) do
+            if not prevItems[label] or count > prevItems[label] then
+            print("Inputs Detected: " .. label)
+            activationSignal = 1
+            os.sleep(0.5)
+                return
+            end
+        end
+    prevItems = currentItems
+    os.sleep(0.5)
+    end
+end
+
+-- Clear Output Function
+local function clearOutputs()
+    print ("Clearing Previous Outputs")
+    redstone.setOutput(sides.east,0)
+    redstone.setOutput(sides.north,0)
+    redstone.setOutput(sides.west,0)
+    activationSignal = 0
+    os.sleep(0.5)
+end
+
+-- Activation Check & Timekeeper
+local function waitForActivation()
+    print("Waiting for Activation Signal")
+    while true do
+        if activationSignal >= 1 then
+            print ("Signal Found; Initiating Black Hole")
+            redstone.setOutput(sides.east,15) -- Seed
+            os.sleep(90)
+            print ("Stability Has Reached 15%; Deploying Spacetime")
+            redstone.setOutput(sides.north,15) -- Spacetime On/Off
+            os.sleep(300) -- Spacetime Expenditure (s)
+            print ("Spacetime Expenditure Too High; Closing Black Hole")
+            redstone.setOutput(sides.west,15) -- Collapser
+            return
+        end
+        os.sleep(0.5)
+    end
+end
+
+-- Main Line
+
+while true do
+    term.clear()
+    print("Initiating Program, Use Ctrl+Alt+C to Exit")
+
+    checkForNewItem()
+    os.sleep(0.5)
+    waitForActivation()
+    os.sleep(0.5)
+    clearOutputs()
+    os.sleep(0.5)
+
+end

@@ -21,6 +21,41 @@ end
 -- Function to Obtain Consumption Information
 local function spacetimePrompt()
     stAmount = ask("Desired Spacetime Consumption Per Cycle:")
+    stAmount = tonumber(stAmount)
+end
+
+-- Function to Find Value of "N" (But Y for sake of the program)
+local function findY()
+    local Y = 0
+    while true do
+        if (30*2^Y) > stAmount then
+            return Y
+        else
+            Y = Y + 1
+        end
+    end
+end    
+
+-- Function to Sum Spacetime Series
+local function sumSeries()
+    local sum = 0
+    for N = 0, (findY() - 1) do
+        sum = sum + (30 * 2^(N))
+    end
+    return sum
+end
+
+-- Remainder Function
+local function remainder()
+    local remainderAmount = (stAmount/(30 * 2^findY())) * 30
+    return remainderAmount
+end
+
+-- Function to Calculate Total Spacetime Consumption, Total Seconds Hole is Awake, & Parallel Efficiency
+local function calculations()
+    local totalAwakeTime = sumSeries() + remainder() + 90
+    local parallelEfficiency = (1 - (80 / totalAwakeTime)) * 100
+    print("Using "..stAmount.." Spacetime, Each Cycle will be "..totalAwakeTime.."(s) Operating at "..parallelEfficiency.."% Parallel Efficiency")
 end
 
 -- Function for Reading ME System
@@ -66,7 +101,7 @@ local function waitForActivation()
         if activationSignal >= 1 then
             print ("Signal Found; Initiating Black Hole")
             redstone.setOutput(sides.east,15) -- Seed
-            os.sleep(85)
+            os.sleep(90)
             print ("Stability Has Reached 15%; Deploying Spacetime")
             redstone.setOutput(sides.north,15) -- Spacetime On/Off
             os.sleep(300) -- Spacetime Expenditure (s)
@@ -78,8 +113,21 @@ local function waitForActivation()
     end
 end
 
--- Main Line
+-- Main Line --
 
+-- Initial Loop for Establishing Uptime
+while true do
+    spacetimePrompt()
+    calculations()
+    local confirmation = ask("Is This Configuration Okay? [Y/N]: ")
+    if confirmation == "Y" or "Yes" or "y" then
+        break
+    else
+        term.clear
+    end
+end
+
+-- Loop for Running Black Hole
 while true do
     term.clear()
     print("Initiating Program, Use Ctrl+Alt+C to Exit")
