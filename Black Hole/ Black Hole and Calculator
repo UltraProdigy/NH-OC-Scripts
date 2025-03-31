@@ -11,7 +11,7 @@ local stAmount = 0
 local activationSignal = 0
 local gpu = component.gpu
 local interface = component.me_interface
-local redstone = component.proxy("087f2ef4-940e-4d6e-b238-397f2a65298f") -- Redstone I/O
+local redstone = component.proxy("Insert Your Redstone I/O Address Between These Quotes") -- Redstone I/O Address
 
 -- Function to set Foreground to Green
 local function green()
@@ -144,9 +144,9 @@ end
 local function clearOutputs()
     green()
     print ("Clearing Previous Outputs")
-    redstone.setOutput(sides.east,0)
-    redstone.setOutput(sides.north,0)
-    redstone.setOutput(sides.west,0)
+    redstone.setOutput(sides.east,0) -- Black Hole Seed Redstone Output
+    redstone.setOutput(sides.north,0) -- Spacetime On/Off Redstone Output
+    redstone.setOutput(sides.west,0) -- Black Hole Collapser Redstone Output
     activationSignal = 0
     os.sleep(0.5)
 end
@@ -159,17 +159,17 @@ local function waitForActivation()
         if activationSignal >= 1 then
             cyan()
             print("Signal Found; Initiating Black Hole")
-            redstone.setOutput(sides.east,15) -- Seed
+            redstone.setOutput(sides.east,15) -- Black Hole Seed Redstone Output
             os.sleep(90)
             io.write("Stability Has Reached ~10%; Deploying ")
             purple()
             print("Spacetime")
-            redstone.setOutput(sides.north,15) -- Spacetime On/Off
-            os.sleep(calculations()) -- Spacetime Expenditure (s)
+            redstone.setOutput(sides.north,15) -- Spacetime On/Off Redstone Output
+            os.sleep(calculations()) -- Expenditure
             io.write("Spacetime ")
             cyan()
             print("Expenditure Too High; Closing Black Hole")
-            redstone.setOutput(sides.west,15) -- Collapser
+            redstone.setOutput(sides.west,15) -- Black Hole Collapser Redstone Output
             return
         end
         os.sleep(0.5)
