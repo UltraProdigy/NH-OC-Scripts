@@ -18,11 +18,6 @@ local function green()
     gpu.setForeground(0x00FF00)
 end
 
--- Function to set Foreground to White
-local function white()
-    gpu.setForeground(0xFFFFFF)
-end
-
 -- Function to set Foreground to Cyan
 local function cyan()
     gpu.setForeground(0x00FFFF)
@@ -147,6 +142,7 @@ end
 
 -- Clear Output Function
 local function clearOutputs()
+    green()
     print ("Clearing Previous Outputs")
     redstone.setOutput(sides.east,0)
     redstone.setOutput(sides.north,0)
@@ -157,16 +153,22 @@ end
 
 -- Activation Check & Timekeeper
 local function waitForActivation()
+    peach()
     print("Waiting for Activation Signal")
     while true do
         if activationSignal >= 1 then
-            print ("Signal Found; Initiating Black Hole")
+            cyan()
+            print("Signal Found; Initiating Black Hole")
             redstone.setOutput(sides.east,15) -- Seed
             os.sleep(90)
-            print ("Stability Has Reached 15%; Deploying Spacetime")
+            io.write("Stability Has Reached ~10%; Deploying ")
+            purple()
+            print("Spacetime")
             redstone.setOutput(sides.north,15) -- Spacetime On/Off
             os.sleep(calculations()) -- Spacetime Expenditure (s)
-            print ("Spacetime Expenditure Too High; Closing Black Hole")
+            io.write("Spacetime ")
+            cyan()
+            print("Expenditure Too High; Closing Black Hole")
             redstone.setOutput(sides.west,15) -- Collapser
             return
         end
@@ -192,13 +194,12 @@ end
 -- Loop for Running Black Hole
 while true do
     term.clear()
+    green()
     print("Initiating Program; Use Ctrl+Alt+C to Exit")
-
     checkForNewItem()
     os.sleep(0.5)
     waitForActivation()
     os.sleep(0.5)
     clearOutputs()
     os.sleep(0.5)
-
 end
