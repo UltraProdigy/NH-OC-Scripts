@@ -151,6 +151,17 @@ local function clearOutputs()
     os.sleep(0.5)
 end
 
+-- Emergency "Recipe Still Running" Check
+local function checkRun()
+    while true do
+        if redstone.getInput(sides.top) ~= 0 then
+            os.sleep(1)
+        elseif redstone.getInput == 0 then
+            break
+        end
+    end
+end
+
 -- Activation Check & Timekeeper
 local function waitForActivation()
     peach()
@@ -170,6 +181,7 @@ local function waitForActivation()
             cyan()
             print("Expenditure Too High; Closing Black Hole")
             redstone.setOutput(sides.west,15) -- Black Hole Collapser Redstone Output
+            checkRun()
             return
         end
         os.sleep(0.5)
