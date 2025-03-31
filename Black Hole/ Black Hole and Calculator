@@ -9,8 +9,34 @@ local sides = require("sides")
 local prevItems = {}
 local stAmount = 0
 local activationSignal = 0
+local gpu = component.gpu
 local interface = component.me_interface
-local redstone = component.proxy("07454d47-0f2f-496d-a628-1a0f798afd3a") -- Redstone I/O
+local redstone = component.proxy("087f2ef4-940e-4d6e-b238-397f2a65298f") -- Redstone I/O
+
+-- Function to set Foreground to Green
+local function green()
+    gpu.setForeground(0x00FF00)
+end
+
+-- Function to set Foreground to White
+local function white()
+    gpu.setForeground(0xFFFFFF)
+end
+
+-- Function to set Foreground to Cyan
+local function cyan()
+    gpu.setForeground(0x00FFFF)
+end
+
+-- Function to set Foreground to Peach
+local function peach()
+    gpu.setForeground(0xFFCC99)
+end
+
+-- Function to set Foreground to Purple
+local function purple()
+    gpu.setForeground(0x8F00FF)
+end
 
 -- Function to Prompt the User
 local function ask(prompt)
@@ -20,7 +46,12 @@ end
 
 -- Function to Obtain Consumption Information
 local function spacetimePrompt()
-    stAmount = ask("Desired Spacetime Consumption Per Cycle:")
+    peach()
+    io.write("Desired")
+    purple()
+    io.write(" Spacetime ")
+    peach()
+    stAmount = ask("Consumption Per Cycle (L):")
     stAmount = tonumber(stAmount)
 end
 
@@ -58,7 +89,7 @@ end
 local function remainder()
     local remainingLiters = stAmount - sumSeriesN()
     local litersNeededInTheNext30SecondsButWeArentUsingTheFull30Seconds = sumSeries() - sumSeriesN()
-    local remainingSeconds = (remainingLiters / litersNeededInTheNext30SecondsButWeArentUsingTheFull30Seconds)
+    local remainingSeconds = 30 * (remainingLiters / litersNeededInTheNext30SecondsButWeArentUsingTheFull30Seconds)
     return remainingSeconds
 end
 
@@ -66,7 +97,26 @@ end
 local function calculations()
     local totalAwakeTime = (30 * findY()) + remainder() + 90
     local parallelEfficiency = (1 - (80 / totalAwakeTime)) * 100
-    print("Using "..stAmount.." Spacetime, Each Cycle will be "..totalAwakeTime.."(s) Operating at "..parallelEfficiency.."% Parallel Efficiency")
+    green()
+    io.write("Using ")
+    cyan()
+    io.write(stAmount.."L")
+    green()
+    io.write(" of ")
+    purple()
+    io.write("Spacetime")
+    green()
+    io.write(", Each Cycle will be ")
+    cyan()
+    io.write(math.ceil(totalAwakeTime).."(s)")
+    green()
+    io.write(" Operating at ")
+    cyan()
+    io.write(math.ceil(parallelEfficiency).."%")
+    green()
+    print(" Uptime-Parallel Efficiency")
+    local totalLaserTime = totalAwakeTime - 90
+    return totalLaserTime
 end
 
 -- Function for Reading ME System
@@ -115,7 +165,7 @@ local function waitForActivation()
             os.sleep(90)
             print ("Stability Has Reached 15%; Deploying Spacetime")
             redstone.setOutput(sides.north,15) -- Spacetime On/Off
-            os.sleep(300) -- Spacetime Expenditure (s)
+            os.sleep(calculations()) -- Spacetime Expenditure (s)
             print ("Spacetime Expenditure Too High; Closing Black Hole")
             redstone.setOutput(sides.west,15) -- Collapser
             return
@@ -128,20 +178,21 @@ end
 
 -- Initial Loop for Establishing Uptime
 while true do
+    term.clear()
     spacetimePrompt()
     calculations()
+    peach()
     local confirmation = ask("Is This Configuration Okay? [Y/N]: ")
-    if confirmation == "Y" or "Yes" or "y" then
+    if confirmation == "Y" or confirmation == "Yes" or confirmation == "y" then
         break
     else
-        term.clear
     end
 end
 
 -- Loop for Running Black Hole
 while true do
     term.clear()
-    print("Initiating Program, Use Ctrl+Alt+C to Exit")
+    print("Initiating Program; Use Ctrl+Alt+C to Exit")
 
     checkForNewItem()
     os.sleep(0.5)
