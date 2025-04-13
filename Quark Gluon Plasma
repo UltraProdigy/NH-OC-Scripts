@@ -2,22 +2,22 @@
 local component = require("component")
 local term = require ("term")
 local os = require ("os")
-local event = require("event")
+local sides = require("sides")
 
 -- Interfaces
 local fluidNet = component.proxy("1b07d0dd-1072-44fa-baaf-fefb3d3d6a6d")
 local itemNet = component.proxy("8fbc170a-fc07-490b-ad01-23865044ff62")
 local combinedReadOnlyNet = component.proxy("Interface ID")
 local mainNetInterface = component.proxy("e3c9ef7b-3652-4b56-b3e4-b31d0f3c813d")
-local plasmaNet = component.proxy("Interface ID")
+local plasmaNet = component.proxy("Interface ID") -- Do we need this at all?? We are using a transposer soo
 
 -- Transposers
 local mainNetTransposer = component.proxy("ID")
 local trashTransposer = component.proxy("ID")
-local curiumTransposer = component.proxy("ID")
-local fluidTranspoer1 = component.proxy("ID")
+local fluidTransposer1 = component.proxy("ID")
 local fluidTransposer2 = component.proxy("ID")
 local fluidTransposer3 = component.proxy("ID")
+local fluidTransposer4 = component.proxy("ID")
 
 -- Other Functionally Global Variables
 local data = component.database
@@ -79,36 +79,38 @@ local function itemToPlasma()
     data.clear(1)
     data.set(1,item)
 
+    -- Establish batchQuantity and set interface to appropriate dust
+    local batchQuantity = readItemNet() * 9
+    print("The Batchquantity for ITEM will be: "..batchQuantity)
+
     -- Curium Contingency
     local itemName = item.label
     if itemName == "Curium Dust" then
         data.clear(1)
-        curiumTransposer.transferFluid(source, sink, count)
+        fluidTransposer4.transferFluid(sides.west,sides.north,(batchQuantity * 144))
     else
     end
 
-    -- Establish batchQuantity and set interface to appropriate dust
-    local batchQuantity = readItemNet() * 9
-    print("The Batchquantity for ITEM will be: "..batchQuantity)
-    mainNetInterface.setInterfaceConfiguration(1, dbaddress, 1, batchQuantity) -- Set Interface to Request Items
+    -- Set Interface to Request Item
+    mainNetInterface.setInterfaceConfiguration(1, dbaddress, 1, batchQuantity)
     
     -- Loop to check for complete item stocking
     while true do 
-    local waitForSystem = mainNetTransposer.getSlotStackSize(side, 1)
+    local waitForSystem = mainNetTransposer.getSlotStackSize(sides.west, 1)
         if waitForSystem == batchQuantity then
             break
         else
             os.sleep(0.5)
         end
-    end    
+    end
 
-    -- Transfer item to plasma, trash hostage item, cleanup
-    mainNetTransposer.transferItem()
+    -- Transfer item to plasma, & Cleanup
+    mainNetTransposer.transferItem(sides.west,sides.east,batchQuantity)
     mainNetInterface.setInterfaceConfiguration(1)
-    trashTransposer.transferItem()
+    trashTransposer.transferItem(sides.east,sides.top,64)
     data.clear(1)
 
-end    
+end
 
 -- Function to Read Fluids in FluidNet
 local function readFluidNet()
@@ -132,24 +134,46 @@ local function fluidToPlasma()
             return
         end
     end
-    
-    -- Define Fluid
-    local item = itemNet.getItemsInNetwork()
-    local itemName = item.label
 
-    if itemName == "drop of Nitrogen Gas" then
-        dustReceiver.setInterfaceConfiguration(1, dbAddress, 1, batchQuantity)
-        dustReceiver.setInterfaceConfiguration(2, dbAddress, 1, remainder)
-    elseif itemName == "Bedrockium Dust" then
-        dustReceiver.setInterfaceConfiguration(1, dbAddress, 2, batchQuantity)
-        dustReceiver.setInterfaceConfiguration(2, dbAddress, 2, remainder)
-    elseif itemName == "Hypogen Dust" then
+    -- Define Fluid
+    local item = fluidNet.getItemsInNetwork()
+    local itemName = item.label
+    local fluidQuantity = readFluidNet() * 1000
+
+    -- Transposer 1 Transfers
+    if itemName == "drop of Helium Gas" then
+        fluidTransposer1.transferFluid(sides.east,sides.north,fluidQuantity)
+    elseif itemName == "drop of Hydrogen Gas" then
+        fluidTransposer1.transferFluid(sides.west,sides.north,fluidQuantity)
+    elseif itemName == "drop of Radon" then
+        fluidTransposer1.transferFluid(sides.south,sides.north,fluidQuantity)
+    -- Transposer 2 Transfers
+    elseif itemName == "drop of Tritium" then
+        fluidTransposer2.transferFluid(sides.east,sides.north,fluidQuantity)
+    elseif itemName == "drop of Chlorine" then
+        fluidTransposer2.transferFluid(sides.west,sides.north,fluidQuantity)
+    elseif itemName == "drop of Nitrogen Gas" then
+        fluidTransposer2.transferFluid(sides.south,sides.north,fluidQuantity)
+    -- Transposer 3 Transfers
+    elseif itemName == "drop of Argon Gas" then
+        fluidTransposer3.transferFluid(sides.east,sides.north,fluidQuantity)
+    elseif itemName == "drop of Deuterium" then
+        fluidTransposer3.transferFluid(sides.west,sides.north,fluidQuantity)
+    elseif itemName == "drop of Mercury" then
+        fluidTransposer3.transferFluid(sides.south,sides.north,fluidQuantity)
+    -- Transposer 4 Transfers
+    elseif itemName == "drop of Fluorine" then
+        fluidTransposer4.transferFluid(sides.east,sides.north,fluidQuantity)
     end
+
+    -- Transfer Fluid from FluidNet to TrashNet
+    trashTransposer.transferFluid(sides.west,sides.top,64)
 
 end
 
 -- Main Line
 while true do
+    term.clear()
     waitForActivation()
 
     for i = 1, 7 do
@@ -160,5 +184,5 @@ while true do
     end
 
     waitForDeactivation()
-    os.sleep(1)
+    os.sleep(2)
 end
