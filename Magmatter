@@ -110,7 +110,7 @@ local function configureInterface()
     elseif itemName == "Cosmic Neutronium Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 13, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 13, remainder)
-    elseif itemName == "Six-Phased Copper Dust" then
+    elseif itemName == "Tritanium Dust" then
         dustReceiver.setInterfaceConfiguration(1, dbAddress, 14, batchQuantity)
         dustReceiver.setInterfaceConfiguration(2, dbAddress, 14, remainder)
     else

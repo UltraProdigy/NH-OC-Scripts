@@ -1,54 +1,53 @@
 -- Library Calls
 local component = require("component")
-local term = require ("term")
 local os = require ("os")
 local sides = require("sides")
 
 -- Interfaces
-local fluidNet = component.proxy("1b07d0dd-1072-44fa-baaf-fefb3d3d6a6d")
-local itemNet = component.proxy("8fbc170a-fc07-490b-ad01-23865044ff62")
-local combinedReadOnlyNet = component.proxy("Interface ID")
-local mainNetInterface = component.proxy("e3c9ef7b-3652-4b56-b3e4-b31d0f3c813d")
-local plasmaNet = component.proxy("Interface ID") -- Do we need this at all?? We are using a transposer soo
+local fluidNet = component.proxy("f69d9513-945e-46c7-ba97-5d5f3c356c68")
+local itemNet = component.proxy("0a9f8e2d-ab1d-4716-8b4c-e9d78d51f1a4")
+local combinedReadOnlyNet = component.proxy("460fb446-eaa9-46cf-bdfd-637df3cc66d0")
+local mainNetInterface = component.proxy("85f80d2b-651e-4a2b-bedc-b767a8fef96f")
 
 -- Transposers
-local mainNetTransposer = component.proxy("ID")
-local trashTransposer = component.proxy("ID")
-local fluidTransposer1 = component.proxy("ID")
-local fluidTransposer2 = component.proxy("ID")
-local fluidTransposer3 = component.proxy("ID")
-local fluidTransposer4 = component.proxy("ID")
+local mainNetTransposer = component.proxy("4fcd951d-fa03-4fb3-af26-7c788fdebcf2")
+local trashTransposer = component.proxy("c800e45c-78de-4ff4-80a6-41c2eeda71bd")
+local fluidTransposer1 = component.proxy("8ee16223-2940-420b-9a7b-b0ef39538cca")
+local fluidTransposer2 = component.proxy("350991ec-ac64-4c84-a34f-f42215fea972")
+local fluidTransposer3 = component.proxy("d5937940-6368-4aea-9dd3-c5df960e670b")
+local fluidTransposer4 = component.proxy("90e64f83-a0bb-4fae-8bef-01984ce5186e")
 
 -- Other Functionally Global Variables
 local data = component.database
 local dbaddress = data.address
+local gpu = component.gpu
 local meItemAmount = 0
 local meFluidAmount = 0
 
--- Function to Wait for Program Activation
-local function waitForActivation()
-    print("Awaiting Activation; Use Ctrl + Alt + C to Exit Program")
-    while true do 
-        local activationItems = combinedReadOnlyNet.getItemsInNetwork()
-        if #activationItems >= 1 then
-            break
-        else
-            os.sleep(1)
-        end
-    end    
+-- Function to set Foreground to Green
+local function green()
+    gpu.setForeground(0x00FF00)
 end
 
--- Function to Wait for Program Deactivation
-local function waitForDeactivation()
-    print("Awaiting Deactivation")
-    while true do
-        local deactivationItems = combinedReadOnlyNet.getItemsInNetwork()
-        if #deactivationItems == 0 then
-            break
+-- Function to set Foreground to Cyan
+local function cyan()
+    gpu.setForeground(0x00FFFF)
+end
+
+-- Function to set Foreground to White
+local function white()
+    gpu.setForeground(0xFFFFFF)
+end
+
+-- Function to Show User When Good Shutdown Time is
+local function safeShutdown()
+        local items = combinedReadOnlyNet.getItemsInNetwork()
+        if #items > 0 then
+            return
         else
-            os.sleep(1)
+            print("Ideal Shut Down Time Reached (5s)")
+            os.sleep(5)
         end
-    end
 end
 
 -- Function to Read Items in ItemNet
@@ -58,7 +57,6 @@ local function readItemNet()
         for _, item in ipairs(meItems) do
             meItemAmount = meItemAmount + item.size
         end
-    print("Detected Item in ItemNet")
     return meItemAmount
 end
 
@@ -67,27 +65,39 @@ local function itemToPlasma()
     
     -- Checks for item in system and skips function if not
     while true do
-        if readItemNet() ~= nil or 0 then
-            break
-        else
+        if readItemNet() == nil or readItemNet() == 0 then
             return
+        else
+            break
         end
     end
 
     -- Sets database to item
-    local item = itemNet.getItemsInNetwork()
+    local items = itemNet.getItemsInNetwork()
+    local item = items[1]
+    local itemName = item.label
     data.clear(1)
-    data.set(1,item)
+    data.set(1,item.name,item.damage,item.nbt)
 
-    -- Establish batchQuantity and set interface to appropriate dust
+    -- Establish batchQuantity
     local batchQuantity = readItemNet() * 9
-    print("The Batchquantity for ITEM will be: "..batchQuantity)
+    print("Found "..readItemNet().." of "..itemName.." in Item Net")
 
     -- Curium Contingency
-    local itemName = item.label
     if itemName == "Curium Dust" then
         data.clear(1)
         fluidTransposer4.transferFluid(sides.west,sides.north,(batchQuantity * 144))
+        trashTransposer.transferItem(sides.east,sides.top,64)
+        return
+    else
+    end
+
+    -- Iodine Contingency
+    if itemName == "Iodine Dust" then
+        data.clear(1)
+        fluidTransposer4.transferFluid(sides.south,sides.north,(batchQuantity * 144))
+        trashTransposer.transferItem(sides.east,sides.top,64)
+        return
     else
     end
 
@@ -98,6 +108,7 @@ local function itemToPlasma()
     while true do 
     local waitForSystem = mainNetTransposer.getSlotStackSize(sides.west, 1)
         if waitForSystem == batchQuantity then
+            print("Transposing ".. batchQuantity.." "..itemName.." to Plasma Net")
             break
         else
             os.sleep(0.5)
@@ -119,7 +130,6 @@ local function readFluidNet()
         for _, item in ipairs(meFluids) do
             meFluidAmount = meFluidAmount + item.size
         end
-    print("Detected Fluid in FluidNet")
     return meFluidAmount
 end
 
@@ -128,61 +138,72 @@ local function fluidToPlasma()
 
     -- Checks for item in system and skips function if not
     while true do
-        if readFluidNet() ~= nil or 0 then
-            break
-         else
+        if readFluidNet() == nil or readFluidNet() == 0 then
             return
+         else
+            break
         end
     end
 
     -- Define Fluid
-    local item = fluidNet.getItemsInNetwork()
+    local items = fluidNet.getItemsInNetwork()
+    local item = items[1]
     local itemName = item.label
     local fluidQuantity = readFluidNet() * 1000
+    print("Found "..readFluidNet().."L of "..itemName)
 
     -- Transposer 1 Transfers
     if itemName == "drop of Helium Gas" then
         fluidTransposer1.transferFluid(sides.east,sides.north,fluidQuantity)
+        print("Transposing "..fluidQuantity.."L of "..itemName.." to Plasma Net")
     elseif itemName == "drop of Hydrogen Gas" then
         fluidTransposer1.transferFluid(sides.west,sides.north,fluidQuantity)
+        print("Transposing "..fluidQuantity.."L of "..itemName.." to Plasma Net")
     elseif itemName == "drop of Radon" then
         fluidTransposer1.transferFluid(sides.south,sides.north,fluidQuantity)
+        print("Transposing "..fluidQuantity.."L of "..itemName.." to Plasma Net")
     -- Transposer 2 Transfers
     elseif itemName == "drop of Tritium" then
         fluidTransposer2.transferFluid(sides.east,sides.north,fluidQuantity)
+        print("Transposing "..fluidQuantity.."L of "..itemName.." to Plasma Net")
     elseif itemName == "drop of Chlorine" then
         fluidTransposer2.transferFluid(sides.west,sides.north,fluidQuantity)
+        print("Transposing "..fluidQuantity.."L of "..itemName.." to Plasma Net")
     elseif itemName == "drop of Nitrogen Gas" then
         fluidTransposer2.transferFluid(sides.south,sides.north,fluidQuantity)
+        print("Transposing "..fluidQuantity.."L of "..itemName.." to Plasma Net")
     -- Transposer 3 Transfers
     elseif itemName == "drop of Argon Gas" then
         fluidTransposer3.transferFluid(sides.east,sides.north,fluidQuantity)
+        print("Transposing "..fluidQuantity.."L of "..itemName.." to Plasma Net")
     elseif itemName == "drop of Deuterium" then
         fluidTransposer3.transferFluid(sides.west,sides.north,fluidQuantity)
+        print("Transposing "..fluidQuantity.."L of "..itemName.." to Plasma Net")
     elseif itemName == "drop of Mercury" then
         fluidTransposer3.transferFluid(sides.south,sides.north,fluidQuantity)
+        print("Transposing "..fluidQuantity.."L of "..itemName.." to Plasma Net")
     -- Transposer 4 Transfers
     elseif itemName == "drop of Fluorine" then
         fluidTransposer4.transferFluid(sides.east,sides.north,fluidQuantity)
+        print("Transposing "..fluidQuantity.."L of "..itemName.." to Plasma Net")
+    else
+        print("Fluid is Non-Transposable; Skipping Round")
+        return
     end
 
     -- Transfer Fluid from FluidNet to TrashNet
-    trashTransposer.transferFluid(sides.west,sides.top,64)
+    trashTransposer.transferFluid(sides.west,sides.bottom,64)
 
 end
 
 -- Main Line
 while true do
-    term.clear()
-    waitForActivation()
-
-    for i = 1, 7 do
-        itemToPlasma()
-        os.sleep(2)
-        fluidToPlasma()
-        os.sleep(2)
-    end
-
-    waitForDeactivation()
+    green()
+    itemToPlasma()
     os.sleep(2)
+    cyan()
+    fluidToPlasma()
+    os.sleep(2)
+    white()
+    safeShutdown()
 end
