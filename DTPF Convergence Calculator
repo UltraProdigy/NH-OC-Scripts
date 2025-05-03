@@ -151,18 +151,18 @@ baseTime = tonumber(recipeTime)
 -- Catalyst Type Prompt
 local catalystType = ask("Type of Catalyst Used: ")
 
-if catalystType == "crude" or "1" then
+if catalystType == "crude" or catalystType == "1" then
     catalystEnergy = 14514983
-elseif catalystType == "prosaic" or "2" then
+elseif catalystType == "prosaic" or catalystType == "2" then
     catalystEnergy = 66768460
-elseif catalystType == "resplendent" or "3" then
+elseif catalystType == "resplendent" or catalystType == "3" then
     catalystEnergy = 269326451
-elseif catalystType == "exotic" or "4" then
+elseif catalystType == "exotic" or catalystType == "4" then
     catalystEnergy = 1073007393
-elseif catalystType == "stellar" or "5" then
+elseif catalystType == "stellar" or catalystType == "5" then
     catalystEnergy = 4276767521
 else
-    print("Horrendous news, you've screwed up the input")
+    print("Horrendous news, you've screwed up the input (or didn't enter it in lowercase)")
     print("Use Ctrl + Alt + C to cancel program and restart")
 end
 
