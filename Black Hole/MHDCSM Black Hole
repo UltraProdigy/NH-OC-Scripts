@@ -1,0 +1,75 @@
+-- Library Call
+local component = require("component")
+local term = require ("term")
+local os = require ("os")
+local sides = require("sides")
+
+-- Component Establishment
+local activityCover = component.proxy("ID")
+local spacetime = component.proxy("ID")
+local magnetoStorage = component.proxy("ID")
+local holeDeployment = component.proxy("ID")
+local holeClosure = component.proxy("ID")
+
+-- Function to Prompt the User
+local function ask(prompt)
+    io.write(prompt.. " ")
+    return io.read()
+end
+
+-- Function to Prompt user and activate program
+local function userPrompt()
+local repeatAmount = ask("Enter Number Of Superdense MHDCSM Plates Being Created: ")
+print("For "..repeatAmount.." Superdense MHDCSM Plates, there will be "..cycles.." machine cycles taking "..seconds.." seconds to complete")
+local userReady = ask("Is This Configuration Okay? [Y/N]: ")
+    if userReady == "Y" or userReady == "y" then
+        break
+    else
+    end
+end
+
+-- Wait Function for Activity Cover Signal Cessation
+local function waitForActivityCessation()
+    while true do
+        local signalStrength = activityCover.getInput(sides.north)
+        if signalStrength == 0 then
+            break
+        else
+            os.sleep(1)
+        end
+    end
+end
+
+-- Main Line
+
+-- Initial Loop for Prompt Variable Establishment
+userPrompt()
+
+-- Loop for Black Hole Functionality
+    -- Activate the black hole (redstone output)
+    holeDeployment.setOutput(sides,15)
+    os.sleep(1)
+    holeDeployment.setOutput(sides,0)
+    -- Sleep for 85 seconds for maximum parallel
+    os.sleep(85)
+    -- Activate redstone signal for plate seeing storage bus 
+    magnetoStorage.setOutput(sides,15)
+    -- Activate redstone signal for spacetime deployment
+    spacetime.setOutput(sides,15)
+    -- Sleep for 30 seconds
+    os.sleep(30)
+    -- Deactivate redstone signal for plate seeing storage bus
+    magnetoStorage(sides,0)
+    -- Deploy Hole Closer
+    holeClosure.setOutput(sides,15)
+    os.sleep(1)
+    holeClosure.setOutput(sides,0)
+    -- Sleep for 870 seconds
+    os.sleep(870)
+    -- Deactivate signal for spacetime deployment
+    spacetime.setOutput(sides,0)
+    -- wait for activity cover redstone cessation
+    waitForActivityCessation()
+    -- sleep for 5 seconds
+    os.sleep(5)
+    -- (program repeats bc its in for loop lol)

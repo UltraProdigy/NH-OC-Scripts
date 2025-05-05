@@ -1,0 +1,171 @@
+-- Library Declaration
+local hasModule,lld = pcall(require, "lldebugger")
+if hasModule then
+	lld.start()
+end
+
+-- Global Variable Hideout
+local baseEUt = 0
+local voltageNumber = 0
+local catalystAmount = 0
+local primaryOutputAmount = 0
+local baseTime = 0
+local catalystEnergy = 0
+
+-- Function to Prompt the User
+local function ask(prompt)
+    io.write(prompt.. " ")
+    return io.read()
+end
+
+-- Function to Round Down to 0.05 Interval (Minecraft Tick Alignment)
+local function roundDownToInterval(y)
+    local result = math.floor(y/0.05) * 0.05
+    return math.max(result,0.05)
+end
+
+-- Function to Round Down to 20 Interval (Recipe/Second Alignment)
+local function roundDownToTwenty(a)
+    return math.floor(a/20) * 20
+end
+
+-- Function to Round Up to nearest tenth
+local function roundUpToTenths(z)
+    return math.ceil(z*10) / 10
+end
+
+-- Overclock Function
+local function overClock(x)
+    x = tonumber(x)
+    -- Function-Wide global variables
+    local ocPower = 4^x
+    local eut = baseEUt * ocPower
+    local totalEU = baseEUt * baseTime * 20
+    local totalOcEu = totalEU * 2^x
+    local amps = math.ceil((baseEUt * ocPower)/voltageNumber)
+    local iocTime = (baseTime/(2^x))
+    local pocTime = (baseTime/(4^x))
+    local iocRecipePerSecond = 0
+    local pocRecipePerSecond = 0
+
+    if iocTime >= 0.05 then
+        iocTime = roundDownToInterval(iocTime)
+        iocRecipePerSecond = (1/iocTime)
+    elseif iocTime < 0.05 then
+        iocRecipePerSecond = (1/iocTime)
+        iocRecipePerSecond = roundDownToTwenty(iocRecipePerSecond)
+    else
+    end
+
+    if pocTime >= 0.05 then
+        pocTime = roundDownToInterval(pocTime)
+        pocRecipePerSecond = (1/pocTime)
+    elseif pocTime < 0.05 then
+        pocRecipePerSecond = (1/pocTime)
+        pocRecipePerSecond = roundDownToTwenty(pocRecipePerSecond)
+    else
+    end
+
+    local iocCatalyst = catalystAmount * iocRecipePerSecond * 0.5 -- For 50% Discount
+    local pocCatalyst = (pocRecipePerSecond * (catalystAmount * 0.5) + ((totalOcEu - totalEU) / (2 * catalystEnergy)))
+    local iocOutputRate = primaryOutputAmount * iocRecipePerSecond
+    local pocOutputRate = primaryOutputAmount * pocRecipePerSecond
+    
+    -- Titlecard
+
+    io.write(x.." Imperfect (2/4) Overclock |")
+
+    print("| "..x.." Perfect (4/4) Overclock (w/ Convergence)")
+    -- Recipe EU/t & Amperage
+
+    io.write("EU/t: "..string.format("%.2e",eut))
+    print(" || Amperage Required: "..amps)
+    -- Recipe Per Second Calculation
+
+    io.write("Recipes Per Second: "..roundUpToTenths(iocRecipePerSecond).." |")
+
+    print("| Recipes Per Second: "..roundUpToTenths(pocRecipePerSecond))
+    -- Recipe Catalyst Requirements (L/s)
+
+    io.write("Catalyst Rate Requirement: "..math.ceil(iocCatalyst).." L/s |")
+
+    print("| Catalyst Rate Requirement: "..math.ceil(pocCatalyst).." L/s")
+    -- Recipe Primary Output Amount (L/s)
+
+    io.write("Primary Output Rate: "..math.ceil(iocOutputRate).." L/s |")
+
+    print("| Primary Output Rate: "..math.ceil(pocOutputRate).." L/s")
+    -- End of Line
+
+    print(string.rep("=",158))
+end
+
+-- Main Line
+-- EU/t Prompt
+local recipeEUt = ask("EU/t of Recipe: ")
+baseEUt = tonumber(recipeEUt)
+
+-- Tier of Input Energy Hatch Prompt
+local voltage = ask("Input Energy Hatch Tier: ")
+
+if voltage == "uxv" then
+    voltageNumber = 503316480
+elseif voltage == "umv" then
+    voltageNumber = 125829120
+elseif voltage == "uiv" then
+    voltageNumber = 31457280
+elseif voltage == "uev" then
+    voltageNumber = 7864320
+elseif voltage == "uhv" then
+    voltageNumber = 1966080
+elseif voltage == "uv" then
+    voltageNumber = 491520
+else
+    print("Either you screwed that up or you're trying to use less then uv power which is cause for concern")
+    print("Use Ctrl + Alt + C to cancel program and restart")
+end
+
+-- Time Prompt
+local recipeTime = ask("Recipe Time (s): ")
+baseTime = tonumber(recipeTime)
+
+-- Catalyst Type Prompt
+local catalystType = ask("Type of Catalyst Used: ")
+
+if catalystType == "crude" or catalystType == "1" then
+    catalystEnergy = 14514983
+elseif catalystType == "prosaic" or catalystType == "2" then
+    catalystEnergy = 66768460
+elseif catalystType == "resplendent" or catalystType == "3" then
+    catalystEnergy = 269326451
+elseif catalystType == "exotic" or catalystType == "4" then
+    catalystEnergy = 1073007393
+elseif catalystType == "stellar" or catalystType == "5" then
+    catalystEnergy = 4276767521
+else
+    print("Horrendous news, you've screwed up the input (or didn't enter it in lowercase)")
+    print("Use Ctrl + Alt + C to cancel program and restart")
+end
+
+-- Catalyst Prompt
+local recipeCatalyst = ask("Catalyst Amount Used (L): ")
+catalystAmount = tonumber(recipeCatalyst)
+
+-- Primary Output Prompt
+local recipePrimaryOutput = ask("Primary Output Amount (L): ")
+primaryOutputAmount = tonumber(recipePrimaryOutput)
+
+-- Final Readout
+print(string.rep("=",158))
+overClock(1)
+overClock(2)
+overClock(3)
+overClock(4)
+overClock(5)
+overClock(6)
+overClock(7)
+overClock(8)
+overClock(9)
+overClock(10)
+overClock(11)
+overClock(12)
