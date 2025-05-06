@@ -11,21 +11,13 @@ local magnetoStorage = component.proxy("ID")
 local holeDeployment = component.proxy("ID")
 local holeClosure = component.proxy("ID")
 
+-- Functionally Transcendent Variables
+local cycles = 0
+
 -- Function to Prompt the User
 local function ask(prompt)
     io.write(prompt.. " ")
     return io.read()
-end
-
--- Function to Prompt user and activate program
-local function userPrompt()
-local repeatAmount = ask("Enter Number Of Superdense MHDCSM Plates Being Created: ")
-print("For "..repeatAmount.." Superdense MHDCSM Plates, there will be "..cycles.." machine cycles taking "..seconds.." seconds to complete")
-local userReady = ask("Is This Configuration Okay? [Y/N]: ")
-    if userReady == "Y" or userReady == "y" then
-        break
-    else
-    end
 end
 
 -- Wait Function for Activity Cover Signal Cessation
@@ -43,33 +35,48 @@ end
 -- Main Line
 
 -- Initial Loop for Prompt Variable Establishment
-userPrompt()
+while true do
+    term.clear()
+    print("Program Initializing, Use Ctrl + Alt + C to Exit")
+    local denseAmount = ask("Enter Number Of Superdense MHDCSM Plates Being Created: ")
+    local platesNeeded = denseAmount * 64
+    cycles = math.ceil(denseAmount/160)
+    local estimatedCompletionTime = cycles * 900
+    print("For "..denseAmount.." Dense Plates, "..platesNeeded.." MHDCSM Plates are Needed")
+    print("This will take "..estimatedCompletionTime.." Total Seconds, in "..cycles.." Total Machine Cycles")
+    local programPermission = ask("Are These Parameters Okay? [Y/N]: ")
+    if programPermission == "Yes" or programPermission == "Y" or programPermission == "y" then
+        break
+    else
+    end
+end
 
 -- Loop for Black Hole Functionality
-    -- Activate the black hole (redstone output)
+for i = 1, cycles do
+    -- Activate Black Hole
     holeDeployment.setOutput(sides,15)
     os.sleep(1)
     holeDeployment.setOutput(sides,0)
-    -- Sleep for 85 seconds for maximum parallel
+    -- Sleep For Parallel
     os.sleep(85)
-    -- Activate redstone signal for plate seeing storage bus 
+    -- Activate MHD Storage Bus 
     magnetoStorage.setOutput(sides,15)
-    -- Activate redstone signal for spacetime deployment
+    -- Activate Spacetime
     spacetime.setOutput(sides,15)
-    -- Sleep for 30 seconds
+    -- Deactivate MHD Storage Bus
     os.sleep(30)
-    -- Deactivate redstone signal for plate seeing storage bus
     magnetoStorage(sides,0)
     -- Deploy Hole Closer
     holeClosure.setOutput(sides,15)
     os.sleep(1)
     holeClosure.setOutput(sides,0)
-    -- Sleep for 870 seconds
+    -- Finish Recipe Cycle
     os.sleep(870)
-    -- Deactivate signal for spacetime deployment
+    -- Deactivate Spacetime
     spacetime.setOutput(sides,0)
-    -- wait for activity cover redstone cessation
+    -- Wait Activity Cessation
     waitForActivityCessation()
-    -- sleep for 5 seconds
     os.sleep(5)
-    -- (program repeats bc its in for loop lol)
+end
+
+term.clear()
