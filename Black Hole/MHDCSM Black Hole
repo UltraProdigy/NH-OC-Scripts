@@ -5,11 +5,11 @@ local os = require ("os")
 local sides = require("sides")
 
 -- Component Establishment
-local activityCover = component.proxy("ID")
-local spacetime = component.proxy("ID")
-local magnetoStorage = component.proxy("ID")
-local holeDeployment = component.proxy("ID")
-local holeClosure = component.proxy("ID")
+local activityCover = component.proxy("288356cc-7ebc-401a-841a-f075cbbbe73a") -- Top
+local spacetime = component.proxy("288356cc-7ebc-401a-841a-f075cbbbe73a") -- North
+local magnetoStorage = component.proxy("288356cc-7ebc-401a-841a-f075cbbbe73a") -- South
+local holeDeployment = component.proxy("8e2e599f-9925-4e72-b21a-a0fb73e7ffe9") -- North
+local holeClosure = component.proxy("8e2e599f-9925-4e72-b21a-a0fb73e7ffe9") -- South
 
 -- Functionally Transcendent Variables
 local cycles = 0
@@ -23,7 +23,7 @@ end
 -- Wait Function for Activity Cover Signal Cessation
 local function waitForActivityCessation()
     while true do
-        local signalStrength = activityCover.getInput(sides.north)
+        local signalStrength = activityCover.getInput(sides.top)
         if signalStrength == 0 then
             break
         else
@@ -40,7 +40,7 @@ while true do
     print("Program Initializing, Use Ctrl + Alt + C to Exit")
     local denseAmount = ask("Enter Number Of Superdense MHDCSM Plates Being Created: ")
     local platesNeeded = denseAmount * 64
-    cycles = math.ceil(denseAmount/160)
+    cycles = math.ceil(denseAmount/640)
     local estimatedCompletionTime = cycles * 900
     print("For "..denseAmount.." Dense Plates, "..platesNeeded.." MHDCSM Plates are Needed")
     print("This will take "..estimatedCompletionTime.." Total Seconds, in "..cycles.." Total Machine Cycles")
@@ -53,30 +53,40 @@ end
 
 -- Loop for Black Hole Functionality
 for i = 1, cycles do
+    term.clear()
+    print("Starting Cycle #"..i)
     -- Activate Black Hole
-    holeDeployment.setOutput(sides,15)
+    print("Activating Black Hole")
+    holeDeployment.setOutput(sides.north,15)
     os.sleep(1)
-    holeDeployment.setOutput(sides,0)
+    holeDeployment.setOutput(sides.north,0)
     -- Sleep For Parallel
-    os.sleep(85)
+    print("Waiting For Hole Instability")
+    os.sleep(90)
     -- Activate MHD Storage Bus 
-    magnetoStorage.setOutput(sides,15)
+    print("Deploying MHDCSM Plates")
+    magnetoStorage.setOutput(sides.south,15)
     -- Activate Spacetime
-    spacetime.setOutput(sides,15)
+    print("Deploying Spacetime")
+    spacetime.setOutput(sides.north,15)
     -- Deactivate MHD Storage Bus
+    print("Barring MHDCSM Availibility")
     os.sleep(30)
-    magnetoStorage(sides,0)
+    magnetoStorage.setOutput(sides.south,0)
     -- Deploy Hole Closer
-    holeClosure.setOutput(sides,15)
+    print("Preparing Hole Closer")
+    holeClosure.setOutput(sides.south,15)
     os.sleep(1)
-    holeClosure.setOutput(sides,0)
+    holeClosure.setOutput(sides.south,0)
     -- Finish Recipe Cycle
-    os.sleep(870)
+    print("Waiting For Completed Recipe")
+    os.sleep(890)
     -- Deactivate Spacetime
-    spacetime.setOutput(sides,0)
+    print("Barring Spacetime Availibility")
+    spacetime.setOutput(sides.north,0)
     -- Wait Activity Cessation
+    print("Awaiting Activity Cessation for Restart")
     waitForActivityCessation()
+    print("Cycle Complete")
     os.sleep(5)
 end
-
-term.clear()
