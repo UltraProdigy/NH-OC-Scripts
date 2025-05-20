@@ -1,4 +1,4 @@
--- Library Declarathon
+-- Library Declaration
 local term = require("term")
 
 -- Function to Prompt the User
@@ -15,25 +15,34 @@ local voltageNumber = 0
 local clockSet = 0
 
 if voltage == "uxv" then
-    voltageNumber = 503316480
-    clockSet = 6
+    voltageNumber = 536870912
+    clockSet = 9
 elseif voltage == "umv" then
-    voltageNumber = 125829120
-    clockSet = 5
+    voltageNumber = 134217728
+    clockSet = 8
 elseif voltage == "uiv" then
-    voltageNumber = 31457280
-    clockSet = 4
+    voltageNumber = 33554432
+    clockSet = 7
 elseif voltage == "uev" then
-    voltageNumber = 7864320
-    clockSet = 3
+    voltageNumber = 8388608
+    clockSet = 6
 elseif voltage == "uhv" then
-    voltageNumber = 1966080
-    clockSet = 2
+    voltageNumber = 2097152
+    clockSet = 5
 elseif voltage == "uv" then
-    voltageNumber = 491520
+    voltageNumber = 524288
+    clockSet = 4
+elseif voltage == "zpm" then
+    voltageNumber = 131072
+    clockSet = 3
+elseif voltage == "luv" then
+    voltageNumber = 32768
+    clockSet = 2
+elseif voltageNumber == "iv" then
+    voltageNumber = 8192
     clockSet = 1
 else
-    print("Either your dumbass entered a fucking number or you asked for lower then UV, fucking why? Fucking try again")
+    print("Invalid tier; Use IV+ voltage or try again using lowercase letters")
 end
 
 -- Traditional Overclock Calculation
@@ -41,35 +50,38 @@ local overClock = ask("Enter Energy Hatch Tier: ")
 local overClockNum = 0
 
 if overClock == "uxv" then
-    overClockNum = 6
+    overClockNum = 9
 elseif overClock == "umv" then
-    overClockNum = 5
+    overClockNum = 8
 elseif overClock == "uiv" then
-    overClockNum = 4
+    overClockNum = 7
 elseif overClock == "uev" then
-    overClockNum = 3
+    overClockNum = 6
 elseif overClock == "uhv" then
-    overClockNum = 2
+    overClockNum = 5
 elseif overClock == "uv" then
+    overClockNum = 4
+elseif overClock == "zpm" then
+    overClockNum = 3
+elseif overClock == "luv" then
+    overClockNum = 2
+elseif overClock == "iv" then
     overClockNum = 1
 else
-    print("Either you fucked up the prompt or you are using less then a UV hatch??? The fuck is wrong with you??")
+    print("Invalid tier; Use IV+ voltage or try again using lowercase letters")
 end
 
 overClockNum = (overClockNum - clockSet)
+local rocTimeDiscount = 2^(overClockNum)
 
--- Time Setting
+-- Time Setting & Function for Time Discount
 local completionTime = ask("Enter Recipe Completion Time: ")
 completionTime = tonumber(completionTime)
 
-local timeDiscount = 2^(overClockNum)
-local oc1TimeDiscount = 2^(overClockNum + 1)
-local oc2TimeDiscount = 2^(overClockNum + 2)
-local oc3TimeDiscount = 2^(overClockNum + 3)
-local oc4TimeDiscount = 2^(overClockNum + 4)
-local oc5TimeDiscount = 2^(overClockNum + 5)
-local oc6TimeDiscount = 2^(overClockNum + 6)
-local oc7TimeDiscount = 2^(overClockNum + 7)
+local function locTimeDiscount(x)
+    local loctimeDiscount = 2^(overClockNum + x)
+    return loctimeDiscount
+end
 
 -- Slice Setting
 local sliceCount = ask("Enter # of Slices: ")
@@ -78,15 +90,6 @@ sliceCount = tonumber(sliceCount)
 -- Machine Count Setting
 local machineCount = ask("Enter Total Machine Count: ")
 machineCount = tonumber(machineCount)
-
--- Laser Overclock Calculation
-local laser1 = (4.3 * sliceCount)
-local laser2 = (19.8 * sliceCount)
-local laser3 = (96.9 * sliceCount)
-local laser4 = (504 * sliceCount)
-local laser5 = (2772 * sliceCount)
-local laser6 = (16077.4 * sliceCount)
-local laser7 = (98072.3 * sliceCount)
 
 -- Function to Calculate Laser Overclock
 local function laserOCAmpMultiplier(x)
@@ -101,7 +104,8 @@ end
 term.clear()
 print("Statistics for a ".. voltage.. " recipe with ".. sliceCount.. " slices taking ".. completionTime.. " seconds using ".. overClock.. " voltage on "..machineCount.." machines:")
 print(string.rep("=",158))
--- No Laser Overclock
+
+-- Lines for Printing Regular OC
 print("No Laser Overclock:")
 print("Amps Per Machine = ".. sliceCount.." || Total Amps = "..(sliceCount * machineCount))
 local Aeu0 = voltageNumber * sliceCount
@@ -110,71 +114,18 @@ print("EU/t Per Machine = "..string.format("%.2e",Aeu0).." || Total EU/t = "..st
 print("Time Per Slice = "..(completionTime / (timeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / timeDiscount))
 print(string.rep("=",158))
 
--- Lines for Printing OCs
-
-
-
-
-
-
--- OC1
-print("1 Laser Overclock:")
-print("Amps Per Machine = ".. laser1.." || Total Amps = "..(laser1 * machineCount))
-local Aeu1 = voltageNumber * laser1
-local Beu1 = Aeu1 * machineCount
-print("EU/t Per Machine = "..string.format("%.2e",Aeu1).." || Total EU/t = "..string.format("%.2e",Beu1))
-print("Time Per Slice = "..(completionTime / (oc1TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc1TimeDiscount))
-print(string.rep("=",158))
--- OC2
-print("2 Laser Overclocks:")
-print("Amps Per Machine = ".. laser2.." || Total Amps = "..(laser2 * machineCount))
-local Aeu2 = voltageNumber * laser2
-local Beu2 = Aeu2 * machineCount
-print("EU/t Per Machine = "..string.format("%.2e",Aeu2).." || Total EU/t = "..string.format("%.2e",Beu2))
-print("Time Per Slice = "..(completionTime / (oc2TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc2TimeDiscount))
-print(string.rep("=",158))
--- OC3
-print("3 Laser Overclocks:")
-print("Amps Per Machine = ".. laser3.." || Total Amps = "..(laser3 * machineCount))
-local Aeu3 = voltageNumber * laser3
-local Beu3 = Aeu3 * machineCount
-print("EU/t Per Machine = "..string.format("%.2e",Aeu3).." || Total EU/t = "..string.format("%.2e",Beu3))
-print("Time Per Slice = "..(completionTime / (oc3TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc3TimeDiscount))
-print(string.rep("=",158))
--- OC4
-print("4 Laser Overclocks:")
-print("Amps Per Machine = ".. laser4.." || Total Amps = "..(laser4 * machineCount))
-local Aeu4 = voltageNumber * laser4
-local Beu4 = Aeu4 * machineCount
-print("EU/t Per Machine = "..string.format("%.2e",Aeu4).." || Total EU/t = "..string.format("%.2e",Beu4))
-print("Time Per Slice = "..(completionTime / (oc4TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc4TimeDiscount))
-print(string.rep("=",158))
--- OC5
-print("5 Laser Overclocks:")
-print("Amps Per Machine = ".. laser5.." || Total Amps = "..(laser5 * machineCount))
-local Aeu5 = voltageNumber * laser5
-local Beu5 = Aeu5 * machineCount
-print("EU/t Per Machine = "..string.format("%.2e",Aeu5).." || Total EU/t = "..string.format("%.2e",Beu5))
-print("Time Per Slice = "..(completionTime / (oc5TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc5TimeDiscount))
-print(string.rep("=",158))
--- OC6
-print("6 Laser Overclocks:")
-print("Amps Per Machine = ".. laser6.." || Total Amps = "..(laser6 * machineCount))
-local Aeu6 = voltageNumber * laser6
-local Beu6 = Aeu6 * machineCount
-print("EU/t Per Machine = "..string.format("%.2e",Aeu6).." || Total EU/t = "..string.format("%.2e",Beu6))
-print("Time Per Slice = "..(completionTime / (oc6TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc6TimeDiscount))
-print(string.rep("=",158))
--- OC7
-print("7 Laser Overclocks:")
-print("Amps Per Machine = ".. laser7.." || Total Amps = "..(laser7 * machineCount))
-local Aeu7 = voltageNumber * laser7
-local Beu7 = Aeu7 * machineCount
-print("EU/t Per Machine = "..string.format("%.2e",Aeu7).." || Total EU/t = "..string.format("%.2e",Beu7))
-print("Time Per Slice = "..(completionTime / (oc7TimeDiscount * sliceCount)).." || Total Time Per Operation = "..(completionTime / oc7TimeDiscount))
-print(string.rep("=",158))
-
-print(laserOCAmps(1))
-print(laserOCAmps(2))
-print(laserOCAmps(3))
-print(laserOCAmps(4))
+-- Lines for Printing Laser OCs
+for i = 1,8 do
+    local x = i
+    print(x.." Laser Overclock")
+    local ampPerMachine = laserOCAmpMultiplier(x) * sliceCount
+    local totalAmps = ampPerMachine * machineCount
+    print("Amps Per Machine = ".. ampPerMachine.." || Total Amps = "..totalAmps)
+    local euPerMachine = voltageNumber * ampPerMachine
+    local totalEU = euPerMachine * machineCount
+    print("EU/t Per Machine = "..string.format("%.2e",euPerMachine).." || Total EU/t = "..string.format("%.2e",totalEU))
+    local timePerSlice = completionTime / (locTimeDiscount(x) * sliceCount)
+    local totalTime = completionTime / locTimeDiscount(x)
+    print("Time Per Slice = "..(timePerSlice).." || Total Time Per Operation = "..(totalTime))
+    print(string.rep("=",158))
+end
