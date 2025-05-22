@@ -167,7 +167,7 @@ white()
 for i = 1,8 do
     local x = i
 white()
-    printToSide("left", x.." Laser Overclock")
+    printToSide("left", x.." Laser Overclock:")
     local ampPerMachine = laserOCAmpMultiplier(x) * sliceCount
     local totalAmps = ampPerMachine * machineCount
 orange()
@@ -187,19 +187,19 @@ end
 for i = 9,17 do
     local x = i
 white()
-    printToSide("right", x.." Laser Overclock")
+    printToSide("right", "|| "..x.." Laser Overclock:")
     local ampPerMachine = laserOCAmpMultiplier(x) * sliceCount
     local totalAmps = ampPerMachine * machineCount
 orange()
-    printToSide("right", "Amps Per Machine = ".. math.ceil(ampPerMachine).." || Total Amps = "..math.ceil(totalAmps))
+    printToSide("right", "|| Amps Per Machine = ".. math.ceil(ampPerMachine).." || Total Amps = "..math.ceil(totalAmps))
     local euPerMachine = voltageNumber * ampPerMachine
     local totalEU = euPerMachine * machineCount
 green()
-    printToSide("right", "EU/t Per Machine = "..string.format("%.2e",euPerMachine).." || Total EU/t = "..string.format("%.2e",totalEU))
+    printToSide("right", "|| EU/t Per Machine = "..string.format("%.2e",euPerMachine).." || Total EU/t = "..string.format("%.2e",totalEU))
     local timePerSlice = completionTime / (locTimeDiscount(x) * sliceCount)
     local totalTime = completionTime / locTimeDiscount(x)
 cyan()
-    printToSide("right", "Time Per Slice = "..(roundUpToTenths(timePerSlice)).."s || Total Time Per Operation = "..(roundUpToTenths(totalTime)).."s")
+    printToSide("right", "|| Time Per Slice = "..(roundUpToTenths(timePerSlice)).."s || Total Time Per Operation = "..(roundUpToTenths(totalTime)).."s")
 white()
     printToSide("right", string.rep("=",158))
 end
