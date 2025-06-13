@@ -1,0 +1,156 @@
+-- Library Declaration
+local term = require("term")
+local component = require("component")
+local sides = require("sides")
+local thread = require("thread")
+
+-- Component Proxies
+local reactor = component.draconic_reactor
+local energyOffload = component.redstone
+local gpu = component.gpu
+
+-- Shared Variables
+local temperature = 0
+local fuelConversion = 0
+local maxFuelConversion = 0
+local fuelConversionLevel = 0
+local fieldStrength = 0
+local maxFieldStrength = 0
+local fieldStrengthLevel = 0
+local energySaturation = 0
+local maxEnergySaturation = 0
+local energySaturationLevel = 0
+local dataThreadStopper = false
+
+-- Data Output Thread
+thread.create(function()
+while not dataThreadStopper do
+    local data = reactor.getReactorInfo()
+    if data then
+        temperature = data.temperature
+        fuelConversion = data.fuelConversion
+        maxFuelConversion = data.maxFuelConversion
+        fuelConversionLevel = (fuelConversion / maxFuelConversion)
+        fieldStrength = data.fieldStrength
+        maxFieldStrength = data.maxFieldStrength
+        fieldStrengthLevel = (fieldStrength / maxFieldStrength)
+        energySaturation = data.energySaturation
+        maxEnergySaturation = data.maxEnergySaturation
+        energySaturationLevel = (energySaturation / maxEnergySaturation)
+    end
+    os.sleep(0.1)
+end
+end)
+
+-- Function to Prompt the User
+local function ask(prompt)
+    io.write(prompt.. " ")
+    return io.read()
+end
+
+-- Function to Initiate / Charge the Reactor
+local function reactorInitiation()
+    while true do
+        term.clear()
+        local reactorStart = ask("Start Reactor Sequence? [Y/N]:")
+        if reactorStart == "Y" or reactorStart == "y" then
+            reactor.chargeReactor()
+            return
+        else
+            os.sleep(0.5)
+        end
+    end
+end
+
+-- Function to Wait for 2000C to Activate Reactor
+local function waitForActivation()
+    while true do
+        if temperature >= 2000 and fieldStrengthLevel >= 0.49 and energySaturationLevel >= 0.5 then
+            reactor.activateReactor()
+            return
+        else
+            os.sleep(0.5)
+        end
+    end
+end    
+
+-- Function to Enable all sides of Redstone IO
+local function enableOffload()
+    energyOffload.setOutput(sides.west, 15)
+    energyOffload.setOutput(sides.east, 15)
+    energyOffload.setOutput(sides.south, 15)
+    energyOffload.setOutput(sides.north, 15)
+    energyOffload.setOutput(sides.top, 15)
+    energyOffload.setOutput(sides.bottom, 15)
+end
+
+-- Function to Disable all sides of Redstone IO
+local function disableOffload()
+    energyOffload.setOutput(sides.west, 0)
+    energyOffload.setOutput(sides.east, 0)
+    energyOffload.setOutput(sides.south, 0)
+    energyOffload.setOutput(sides.north, 0)
+    energyOffload.setOutput(sides.top, 0)
+    energyOffload.setOutput(sides.bottom, 0)
+end
+
+-- Function For Reactor Function and Shutdown Threads
+local function reactorShutdown()
+    local shutdown = false
+    local outputOn = false
+
+    -- Reactor Function
+    local reactorFunctionThread = thread.create(function()
+        while not dataThreadStopper do
+            if not outputOn and energySaturationLevel > 0.08 and temperature < 9000 then
+                enableOffload()
+                outputOn = true
+            elseif outputOn and (energySaturationLevel < 0.075 or temperature > 9000) then
+                disableOffload()
+                outputOn = false
+            end
+            os.sleep(0.5)
+        end
+    end)
+
+    -- Emergency Shutdown Thread
+    local emergencyShutdownThread = thread.create(function()
+        while not dataThreadStopper do
+            if fuelConversionLevel >= 0.75 or temperature >= 9500 or energySaturationLevel < 0.04 or fieldStrengthLevel < 0.2 then
+                shutdown = true
+                break
+            end
+            os.sleep(0.5)
+        end
+    end)
+
+    -- Offline Reactor Thread Killer Thread
+    thread.create(function()
+    while not dataThreadStopper do
+        local data = reactor.getReactorInfo()
+        local status = data.status
+        if status == "offline" or status == "stopping" then
+            shutdown = true
+        end
+        os.sleep(0.5)
+    end
+    end)
+
+    -- Flag Finder
+    while not shutdown do
+        os.sleep(0.1)
+    end
+
+    reactor.stopReactor()
+    dataThreadStopper = true
+end
+
+-- Main Line
+reactorInitiation()
+print("Reactor Sequence Initiated")
+waitForActivation()
+print("Starting Reaction")
+reactorShutdown()
+print("Reactor Cessated")
+disableOffload()
+os.exit()
