@@ -7,7 +7,6 @@ local thread = require("thread")
 -- Component Proxies
 local reactor = component.draconic_reactor
 local energyOffload = component.redstone
-local gpu = component.gpu
 
 -- Shared Variables
 local temperature = 0
@@ -52,8 +51,9 @@ end
 local function reactorInitiation()
     while true do
         term.clear()
-        local reactorStart = ask("Start Reactor Sequence? [Y/N]:")
-        if reactorStart == "Y" or reactorStart == "y" then
+        print("Program Initializing; Use Ctrl + Alt + C to Exit")
+        local reactorStart = ask("Start Reactor Sequence? [Y/N]: ")
+        if reactorStart == "Y" or reactorStart == "y" or reactorStart == "yes" or reactorStart == "Yes" then
             reactor.chargeReactor()
             return
         else
